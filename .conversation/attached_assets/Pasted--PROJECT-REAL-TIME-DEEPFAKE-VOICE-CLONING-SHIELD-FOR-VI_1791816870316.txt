@@ -1,0 +1,907 @@
+# PROJECT: REAL-TIME DEEPFAKE & VOICE-CLONING SHIELD FOR VIDEO CALLS
+
+Build a polished, modern, interactive frontend for a cybersecurity product that detects real-time deepfake video, cloned voices, impersonation attempts, and social-engineering scams during video calls.
+
+The product should feel like a professional security platform used by banks, cybersecurity analysts, enterprises, and everyday users.
+
+**IMPORTANT INSTRUCTIONS**
+- Preserve EVERY requirement, feature, detection signal, defense mechanism, privacy requirement, demo feature, and build-stage detail in this prompt.
+- Do not remove, simplify away, rename out of existence, or silently omit any feature.
+- You are building the FRONTEND FIRST. Create a complete, visually impressive, responsive, functional UI with realistic demo data and simulated interactions wherever backend integration is not yet available.
+- Do not pretend that simulated detection is real AI detection. Clearly distinguish demo/simulated results from genuine model inference.
+- Build the complete project, not just a landing page or static mockup.
+- Make the application runnable in Replit with a working development server.
+- Do not stop after generating the homepage. Implement every major screen, navigation item, component, and interaction described below.
+
+---
+
+## 1. PRODUCT OVERVIEW
+
+Product concept: Real-Time Deepfake & Voice-Cloning Shield for Video Calls.
+
+### The problem
+
+Scammers use real-time generative AI, deepfake video, and voice cloning on Zoom, Microsoft Teams, FaceTime, and other communication platforms to impersonate company CEOs, bank managers, colleagues, or family members. Their objective is to trick victims into transferring money, revealing OTPs, disclosing credentials, or sharing sensitive information.
+
+### What the product does
+
+The product is a virtual webcam/audio driver or browser-level security utility that sits between a video-call application and its hardware or browser stream. It analyzes video frames and audio streams to identify potential generative AI artifacts, including unnatural facial warping, missing or abnormal micro-saccades, and voice-cloning spectral anomalies.
+
+When suspicious activity is detected, the interface displays a prominent red warning alert.
+
+The frontend must communicate this concept through a live monitoring interface, detection indicators, a rolling trust score, detailed evidence, security alerts, and actionable verification controls.
+
+Do not falsely imply that a normal web frontend already has operating-system-level virtual camera drivers or unrestricted access to every video-call application. Show the browser-based implementation and integration status honestly.
+
+---
+
+## 2. DESIGN DIRECTION
+
+Create a premium cybersecurity command center with a dark Security Operations Center (SOC) aesthetic.
+
+### Visual identity
+
+- Product name: VEIL — Deepfake Defense.
+- Tagline: See the person. Verify the identity.
+- Dark navy and charcoal backgrounds.
+- Subtle electric cyan and blue accents.
+- Green for verified/low-risk states.
+- Amber for suspicious or uncertain states.
+- Red for high-risk detections and urgent warnings.
+- Crisp typography, clear spacing, thin borders, soft glows, subtle gradients, and restrained glassmorphism.
+- Use a consistent design system with reusable components.
+- Use smooth, subtle animations for scanning, data updates, alerts, and transitions.
+- Avoid excessive neon, clutter, huge empty spaces, cartoon graphics, or generic template styling.
+
+The application should resemble a credible, production-grade security product.
+
+### Suggested layout
+
+Create a persistent left sidebar, a compact top navigation bar, and a responsive main content area.
+
+Sidebar navigation:
+1. Overview
+2. Live Shield
+3. Threat Intelligence
+4. Attack Simulator
+5. Scam Replay
+6. Incident History
+7. Trusted Contacts
+8. Enterprise Security
+9. Benchmark Lab
+10. Privacy & Settings
+
+The sidebar must have working navigation. Each item should open its own fully designed page or functional view.
+
+Top bar:
+- Product logo and name.
+- Shield status indicator.
+- Connection status.
+- Notification bell.
+- Current monitoring session indicator.
+- User profile menu.
+- Theme-independent readable status labels.
+
+Include a global search or command palette, keyboard-friendly navigation, helpful tooltips, loading states, empty states, and polished toast notifications.
+
+---
+
+## 3. OVERVIEW DASHBOARD
+
+Create an informative dashboard that gives the user an immediate understanding of the security situation.
+
+Include:
+
+### A. Main trust score card
+- Large animated circular trust meter from 0–100.
+- Green, amber, and red states.
+- Clearly label whether the score represents trust or risk; use one consistent interpretation throughout the app.
+- Recommended interpretation: 100 = higher confidence in authenticity, 0 = higher suspicion.
+- Show a separate risk indicator if necessary.
+- Display confidence, signal quality, monitoring duration, and the current verification status.
+- Include an explicit “Insufficient Data” state when evidence is inadequate.
+
+### B. Live monitoring summary
+- Video analysis status.
+- Audio analysis status.
+- Lip-sync analysis status.
+- Behavioral analysis status.
+- Transcript scanner status.
+- Identity verification status.
+- Browser permissions and stream connectivity.
+- Last analysis timestamp.
+
+### C. Threat statistics
+Display:
+- Total sessions monitored.
+- Suspicious sessions.
+- High-risk alerts.
+- Scam requests detected.
+- Verification challenges completed.
+- Recent incidents.
+
+Use plausible demonstration data, clearly labeled as demo data until connected to real processing.
+
+### D. Threat timeline
+Show a timeline of events with timestamps, severity, event type, and explanation.
+
+### E. Recent security activity
+Provide a compact activity feed with:
+- Suspicious lip-sync.
+- Unusual facial warping.
+- Voice spectral anomaly.
+- Urgency or secrecy language.
+- Payment or OTP request.
+- Successful identity verification.
+- Inconclusive analysis.
+
+### F. Quick actions
+- Start monitoring.
+- Open Live Shield.
+- Launch Attack Simulator.
+- Verify a caller.
+- Review incidents.
+- Manage trusted contacts.
+
+### G. Threat distribution visualization
+Include interactive charts for threat categories, severity distribution, and detection trends over time.
+
+---
+
+## 4. LIVE SHIELD — THE CORE EXPERIENCE
+
+This is the most important page. Make it the visual centerpiece of the product.
+
+Design a real-time monitoring workspace with a central video preview area, detection indicators, a live trust meter, and an evidence panel.
+
+### A. Video and audio monitoring
+
+Provide controls for:
+- Webcam access using getUserMedia.
+- Microphone access using getUserMedia.
+- Screen/tab capture using getDisplayMedia where supported and appropriately permissioned.
+- Selecting available camera and microphone devices.
+- Starting, pausing, resuming, and ending a monitoring session.
+- Displaying permission and connection states.
+- Switching between webcam, screen-sharing, and demonstration modes.
+- Displaying the elapsed session duration.
+
+Use actual browser media APIs when the user grants permission. Handle denied permissions, unavailable devices, browser incompatibility, and missing streams gracefully.
+
+Do not claim that browser tab capture automatically grants unrestricted access to another application's audio or video.
+
+If a real stream is unavailable, provide a clearly labeled simulated monitoring mode.
+
+### B. Live trust meter
+
+Show:
+- A rolling 0–100 authenticity confidence score.
+- Green, amber, and red visual states.
+- Current risk classification.
+- Confidence per detection signal.
+- Number of signals analyzed.
+- A visible “Not Enough Data Yet” state.
+- An explanation of how the score is calculated in demo mode.
+
+Do not represent fabricated scores as actual ML predictions.
+
+### C. Video detection signals
+
+Provide separate visual indicators for:
+- Face-boundary and blending artifacts.
+- Temporal flicker.
+- Lighting and shadow inconsistencies.
+- Abnormal blinking and gaze patterns.
+- Lip-sync mismatch between audio and mouth motion.
+- Frame-to-frame warping during head turns.
+- Missing or unusual micro-saccades.
+
+For each signal, show:
+- Status.
+- Confidence or evidence strength.
+- Severity.
+- Short explanation.
+- Timestamp of the latest observation.
+
+### D. Audio detection signals
+
+Include:
+- Spectral anomalies.
+- Missing high-frequency audio detail.
+- Vocoder artifacts.
+- Unnatural prosody.
+- Unusual breathing patterns.
+- Latency anomalies.
+- Robotic pause patterns.
+- Possible real-time voice-cloning indicators.
+
+Add a waveform visualization and audio-analysis status.
+
+Do not claim to detect cloned voices accurately using only an ordinary waveform visualization. The frontend should be ready to connect to real analysis models.
+
+### E. Explainability panel
+
+Show exactly why the system raised an alert.
+
+Example demonstration evidence:
+- Lip-sync drift: 340 ms.
+- No detected blink for 18 seconds.
+- Possible spectral cutoff near 8 kHz.
+- Unusual facial boundary movement.
+- Suspicious urgency detected in transcript.
+
+Mark these examples as simulated evidence until genuine detection logic supplies the results.
+
+Include:
+- Face-mesh overlay visualization.
+- Audio waveform.
+- Signal-level confidence bars.
+- Evidence timestamps.
+- Short plain-language explanations.
+- Severity labels.
+- Expandable technical details.
+- A distinction between confirmed observations, model suspicions, and insufficient evidence.
+
+### F. Red-alert experience
+
+When the demonstration detects a high-risk event, trigger a prominent red alert panel or modal.
+
+It should include:
+- “POTENTIAL DEEPFAKE / IMPERSONATION DETECTED.”
+- The triggering signals.
+- Current trust score and risk level.
+- Recommended immediate action.
+- Acknowledge alert button.
+- Verify identity button.
+- Start callback verification button.
+- End monitoring button.
+- Report incident button.
+
+Include a subtle alert sound only when enabled by the user, with a visible mute control.
+
+Do not automatically terminate real calls or pretend to have control over Zoom, Teams, or FaceTime.
+
+---
+
+## 5. LIVE TRUST ENGINE AND SIGNAL FUSION
+
+The interface must communicate layered risk assessment rather than relying on a single yes/no model.
+
+Include:
+- Video signal confidence.
+- Audio signal confidence.
+- Behavioral signal confidence.
+- Scam-context signal confidence.
+- Identity verification status.
+- Overall trust score.
+- Evidence quality and data sufficiency.
+- Timestamped score changes.
+- An explanation of which signals influenced the current score.
+
+Create a visual signal-fusion diagram that shows how individual signals contribute to the overall assessment.
+
+The frontend should support future integration with browser-compatible inference technologies such as WebAssembly, ONNX Runtime Web, and WebGPU where available.
+
+Do not invent a scientifically validated weighting formula. In demo mode, clearly disclose that the scoring logic is illustrative.
+
+---
+
+## 6. ACTIVE DEFENSES
+
+Build a dedicated verification panel accessible from Live Shield and the dashboard.
+
+### A. Challenge-response liveness
+
+Include challenge buttons for:
+- Turn your head approximately 90 degrees.
+- Cover half your face with your hand.
+- Hold up three fingers.
+
+Display:
+- The selected challenge.
+- Challenge status.
+- Countdown.
+- Completion status.
+- Evidence received.
+- Verification result.
+- Retry option.
+
+Explain that live deepfake systems may sometimes fail under occlusion or profile views, but these challenges are not foolproof.
+
+Never automatically declare a caller authentic simply because a challenge was completed.
+
+### B. Randomized phrase challenge
+
+Generate a random phrase for the caller to repeat.
+
+Features:
+- Generate new phrase.
+- Start challenge.
+- Display the phrase prominently.
+- Show a countdown.
+- Record the challenge state.
+- Display a placeholder for future voice-match evaluation.
+- Show pass, fail, and inconclusive states.
+
+Clearly distinguish successful completion of a spoken challenge from proof that a voice is genuine.
+
+### C. Out-of-band verification
+
+Include:
+- One-tap verification workflow.
+- Email or SMS verification-code UI.
+- Pre-shared family/company safe-word verification.
+- Code entry field.
+- Resend and expiry states.
+- Verification history.
+
+Unless an actual backend or messaging provider is configured, use a clearly labeled demo verification flow. Never claim a message was sent when it was not.
+
+### D. Callback verification
+
+Include:
+- Trusted contact selection.
+- Verified contact details.
+- Callback recommendation.
+- Confirmation that the user should end the suspicious interaction before independently calling a trusted number.
+- A simulated callback confirmation flow.
+
+Use trusted saved contact details rather than any suspicious caller-provided number.
+
+---
+
+## 7. SCAM-CONTEXT INTELLIGENCE
+
+Create a Threat Intelligence page with live transcript analysis and contextual threat detection.
+
+### A. Live transcript scanner
+
+Build a transcript panel that can display text from a future speech-to-text integration.
+
+Highlight suspicious phrases involving:
+- Urgency.
+- Secrecy.
+- Wire transfers.
+- Gift cards.
+- OTP requests.
+- Passwords and credentials.
+- Payment redirection.
+- Requests to bypass normal approval processes.
+- Threats, pressure tactics, and authority impersonation.
+
+Display:
+- Timestamp.
+- Highlighted phrase.
+- Threat category.
+- Severity.
+- Explanation.
+- Confidence or evidence strength.
+
+Include a manual text-entry demo so the user can paste a sample transcript and see the interface identify suspicious phrases using transparent demonstration rules.
+
+Clearly label keyword-based results as heuristic detections, not AI-generated proof of fraud.
+
+### B. Money-request tripwire
+
+When payment-related or sensitive-credential language is detected, display a full-screen warning:
+
+“STOP: VERIFY BEFORE SENDING.”
+
+Include:
+- Detected request.
+- Why it is suspicious.
+- Suggested safe action.
+- Verify caller button.
+- Initiate callback verification button.
+- Dismiss alert button.
+
+### C. Identity-claim check
+
+Let users configure an expected identity, for example “Rahul, CFO.”
+
+Show:
+- Claimed identity.
+- Expected identity.
+- Consented reference face status.
+- Consented reference voice status.
+- Face-match result placeholder.
+- Voice-match result placeholder.
+- Identity consistency status.
+
+Provide enrollment and consent screens for reference samples.
+
+Do not claim identity verification works until a genuine, appropriately validated matching system is integrated. Never infer authenticity from appearance alone.
+
+---
+
+## 8. ATTACK SIMULATOR
+
+Build an impressive, interactive attack simulation page for live demonstrations and hackathon judging.
+
+Include scenario cards for:
+1. CEO requesting an urgent wire transfer.
+2. A fake bank manager asking for an OTP.
+3. A family member impersonation scam.
+4. A deepfake video with facial warping.
+5. A cloned voice with suspicious audio characteristics.
+6. A caller requesting secrecy and bypassing approval.
+7. A benign, legitimate caller.
+8. A difficult-to-classify call with insufficient evidence.
+
+Each scenario should have:
+- Scenario title.
+- Attacker objective.
+- Simulated call preview or animated avatar.
+- Simulated transcript.
+- Detection signals.
+- Live score progression.
+- Triggered alerts.
+- Explanation of the verdict.
+- Recommended response.
+
+Controls:
+- Start simulation.
+- Pause.
+- Resume.
+- Reset.
+- Switch scenario.
+- Replay.
+- Compare scenarios side by side.
+
+During a simulation, animate the trust score and detection signals as events occur. Trigger the red warning overlay for high-risk scenarios.
+
+The benign scenario should not automatically receive a perfect score, and ambiguous scenarios must demonstrate uncertainty.
+
+Include a visible banner: “SIMULATION MODE — RESULTS ARE NOT LIVE DETECTIONS.”
+
+Do not require real deepfake-generation capabilities to demonstrate the defensive workflow. Use preconfigured scenarios, animations, and synthetic demonstration events.
+
+---
+
+## 9. SIDE-BY-SIDE REAL VS. FAKE COMPARISON
+
+Create a comparison view with two panels.
+
+Left:
+- Illustrative genuine-call scenario.
+
+Right:
+- Illustrative suspicious-call scenario.
+
+Compare:
+- Facial movement.
+- Temporal consistency.
+- Lighting consistency.
+- Lip-sync.
+- Audio characteristics.
+- Transcript risk.
+- Verification status.
+- Overall trust score.
+
+Include synchronized timelines and indicators that light up when a simulated anomaly occurs.
+
+Do not label a sample as genuinely real or fake unless its provenance is known. Otherwise, label the panels “Illustrative Lower-Risk Scenario” and “Illustrative Higher-Risk Scenario.”
+
+---
+
+## 10. SCAM REPLAY
+
+Create a dedicated Scam Replay page with three main scenarios:
+
+### CEO wire fraud
+A caller impersonates a senior executive, requests an urgent transfer, and tells the employee to bypass normal approvals.
+
+### Family emergency scam
+A caller claims to be a family member in trouble and demands immediate money while discouraging independent verification.
+
+### Fake bank manager
+A caller claims to represent a bank and requests an OTP or account credentials.
+
+For each replay, show:
+- Scenario introduction.
+- Simulated transcript.
+- Timeline of events.
+- Detection signals.
+- Trust-score changes.
+- Alert moments.
+- Recommended defensive actions.
+- Final incident summary.
+
+Include replay, pause, step-through-timeline, reset, and scenario-switching controls.
+
+---
+
+## 11. INCIDENT HISTORY AND REPORTING
+
+Build a full Incident History page.
+
+Include:
+- Search.
+- Filtering by severity, date, threat category, and verdict.
+- Sorting.
+- Pagination or a polished scrollable list.
+- Incident detail drawer.
+- Event timeline.
+- Evidence summaries.
+- Verification attempts.
+- User actions.
+- Resolution status.
+- Export controls.
+
+### Post-call incident report
+
+Create a professional report preview with:
+- Incident ID.
+- Session start and end times.
+- Overall risk assessment.
+- Signal-level evidence.
+- Suspicious transcript excerpts.
+- Verification attempts.
+- User actions taken.
+- Timeline of flags.
+- System limitations.
+- Recommended follow-up actions.
+
+Include a functional PDF-export workflow where feasible.
+
+Clearly identify simulated incidents and sample data in exported demonstration reports.
+
+The product must not claim to preserve recordings when no recording was made. Provide report generation from available event metadata without requiring video or audio storage.
+
+---
+
+## 12. TRUSTED CONTACTS VAULT
+
+Build a secure-looking contact-management page.
+
+Features:
+- Add, edit, and remove trusted contacts.
+- Contact name and relationship.
+- Organization and role.
+- Trusted phone number.
+- Trusted email.
+- Consented reference-face enrollment placeholder.
+- Consented reference-voice enrollment placeholder.
+- Optional family or company safe word.
+- Verification status.
+- Last verified date.
+- Callback action.
+- Search and filtering.
+
+Include consent notices before any biometric reference enrollment.
+
+Use local storage only for appropriate non-sensitive demo settings and sample data. Do not store raw face images, voice recordings, authentication secrets, or safe words insecurely in browser storage.
+
+Explain that production biometric enrollment requires stronger protection, explicit consent, and appropriate data handling.
+
+---
+
+## 13. ENTERPRISE SECURITY
+
+Build a separate Enterprise Security page with a professional admin-console interface.
+
+Include:
+- Organization-wide monitoring overview.
+- Number of monitored sessions.
+- High-risk incidents.
+- Executive impersonation alerts.
+- Incident severity distribution.
+- Department-level risk overview.
+- Recent security events.
+- Team alert settings.
+- Incident assignment.
+- Escalation workflow.
+- Policy configuration.
+- Executive impersonation watchlist.
+- Security analyst activity.
+- Organization-wide alert controls.
+
+Add role-based UI views for:
+- Security administrator.
+- Security analyst.
+- Employee.
+
+Include an enterprise executive-impersonation watchlist.
+
+Demonstrate how an impersonation attempt affecting one employee could trigger a wider organizational warning.
+
+Clearly label organization-wide statistics and actions as simulated until a real authenticated backend is integrated.
+
+---
+
+## 14. BENCHMARK LAB
+
+Create a dedicated Benchmark Lab for model evaluation and honest reporting.
+
+Support a future evaluation workflow for:
+- FaceForensics++.
+- ASVspoof.
+- Other appropriately licensed and suitable deepfake-detection datasets.
+
+Include:
+- Dataset selector.
+- Evaluation configuration.
+- Run benchmark button.
+- Dataset status.
+- Test-set size.
+- True positives.
+- False positives.
+- True negatives.
+- False negatives.
+- Precision.
+- Recall.
+- F1 score.
+- False-positive rate.
+- ROC curve.
+- AUC.
+- Confusion matrix.
+- Model comparison.
+- Evaluation history.
+- Exportable benchmark summary.
+
+Use accurate formulas and avoid fabricated performance claims.
+
+If no actual benchmark has been run, show empty states or clearly labeled illustrative results. Never display made-up accuracy as validated performance.
+
+---
+
+## 15. PRIVACY & SETTINGS
+
+Create a complete settings page.
+
+Include:
+- Monitoring permissions.
+- Camera and microphone status.
+- Local processing status.
+- Privacy controls.
+- Consent settings.
+- Alert sound toggle.
+- Notification preferences.
+- Risk sensitivity controls.
+- Language selection.
+- Accessibility settings.
+- Trusted contact management shortcuts.
+- Data retention preferences.
+- Clear demo data action.
+- Export user settings.
+- Privacy information.
+
+### On-device processing
+
+The product should aim to keep video and audio processing on the user's device, using technologies such as WebAssembly, ONNX Runtime Web, or WebGPU where supported.
+
+Clearly distinguish:
+- Features processed locally.
+- Features awaiting model integration.
+- Features requiring a backend.
+- Features that are currently simulated.
+
+### Transparency and consent
+
+Show a persistent indicator when monitoring is active.
+
+Never record by default.
+
+Provide explicit permission requests, visible capture status, and an easy way to stop monitoring.
+
+Do not send camera, microphone, video, audio, or biometric data to a server in the frontend-only demo.
+
+### Accessibility and multilingual support
+
+Provide an interface prepared for:
+- English.
+- Hindi.
+- Kannada.
+- Tamil.
+
+Include accessible color contrast, keyboard navigation, descriptive labels, screen-reader-friendly status messages, and responsive text sizing.
+
+Do not claim equal detection accuracy across languages until independently evaluated.
+
+---
+
+## 16. FRONTEND FUNCTIONALITY REQUIREMENTS
+
+The interface must be genuinely interactive, not just visually attractive.
+
+Implement:
+- Working sidebar navigation.
+- Responsive layout.
+- Reusable cards and status indicators.
+- Interactive charts.
+- Live-style score animations in demo mode.
+- Start, pause, resume, and stop monitoring controls.
+- Camera and microphone permission handling.
+- Simulated call scenarios.
+- Challenge-response interactions.
+- Random phrase generation.
+- Transcript analysis demo.
+- Money-request warning modal.
+- Trusted contact CRUD operations.
+- Incident filtering and detail views.
+- Report preview and export.
+- Settings controls.
+- Notifications and toast messages.
+- Search and filtering.
+- Tooltips.
+- Confirmation dialogs for destructive actions.
+- Loading, error, empty, success, and insufficient-data states.
+- Keyboard-accessible modals and controls.
+- Responsive navigation for mobile screens.
+
+Persist harmless demo preferences and non-sensitive sample configuration where appropriate. Provide a reset-demo-data control.
+
+Avoid fake buttons that do nothing. If a feature requires a backend or real detection model, provide a meaningful prototype interaction and explain the integration status.
+
+---
+
+## 17. TECHNICAL REQUIREMENTS
+
+Use a modern React-based frontend that runs reliably in Replit.
+
+Preferred stack:
+- React.
+- TypeScript.
+- Vite.
+- Tailwind CSS.
+- Lucide React icons.
+- Recharts for charts.
+- Framer Motion for subtle animations where compatible.
+
+If a preferred library cannot be installed or configured successfully, choose a reliable alternative rather than leaving the application broken.
+
+Organize the application into reusable components, layouts, pages, hooks, and demo-data modules.
+
+Suggested structure:
+
+src/
+  components/
+    layout/
+    dashboard/
+    monitoring/
+    detection/
+    alerts/
+    verification/
+    charts/
+    contacts/
+    incidents/
+    common/
+  pages/
+    Overview.tsx
+    LiveShield.tsx
+    ThreatIntelligence.tsx
+    AttackSimulator.tsx
+    ScamReplay.tsx
+    IncidentHistory.tsx
+    TrustedContacts.tsx
+    EnterpriseSecurity.tsx
+    BenchmarkLab.tsx
+    Settings.tsx
+  hooks/
+  services/
+  data/
+  types/
+  utils/
+
+Use a consistent typed data model for detection signals, trust scores, incidents, contacts, verification challenges, and simulated scenarios.
+
+Create a clear separation between:
+- Frontend UI.
+- Browser media capture.
+- Demo simulation engine.
+- Future real detection-model integration.
+- Future backend and messaging integrations.
+
+Use deterministic demo scenarios so that a judge can reproduce the same results during a presentation.
+
+Avoid unnecessary dependencies, fake backend endpoints, hardcoded secrets, and broken imports.
+
+Make the application start successfully with a clear development command and a working Replit preview.
+
+---
+
+## 18. REQUIRED INITIAL EXPERIENCE
+
+When a user opens the application, show the Overview dashboard.
+
+The first-time experience should include:
+- A short introduction to VEIL.
+- A clear explanation of its defensive purpose.
+- A “Launch Demo” button.
+- A “Start Live Monitoring” button.
+- A privacy and consent notice.
+- A clear indication that live AI detection models are not yet connected if the project is still frontend-only.
+
+Clicking “Launch Demo” should take the user directly into an interactive attack simulation where the trust score changes, detection signals activate, and the alert workflow can be demonstrated.
+
+Clicking “Start Live Monitoring” should request browser media permissions only when needed, display actual stream status, and clearly identify which analyses are real, simulated, or unavailable.
+
+---
+
+## 19. HACKATHON DEMO FLOW
+
+Make the following presentation sequence possible without requiring a backend:
+
+1. Open the Overview dashboard.
+2. Show the current monitoring and threat summary.
+3. Launch the Attack Simulator.
+4. Select the CEO wire-fraud scenario.
+5. Watch simulated video, audio, and behavioral indicators update.
+6. Show the trust score changing as evidence accumulates.
+7. Display a high-risk red alert.
+8. Open the Explainability panel to inspect the triggering signals.
+9. Demonstrate the liveness challenge.
+10. Generate a randomized phrase.
+11. Trigger the transcript scanner with an urgent payment request.
+12. Show the “STOP: VERIFY BEFORE SENDING” warning.
+13. Demonstrate independent callback verification using a sample trusted contact.
+14. Open Scam Replay and inspect the incident timeline.
+15. Generate a post-call incident report.
+16. Open Benchmark Lab to explain how real evaluation will be performed.
+17. Open Privacy & Settings to demonstrate the local-processing design and consent controls.
+
+Provide a “Reset Demo” button so the entire demonstration can be repeated reliably.
+
+---
+
+## 20. BUILD PRIORITY
+
+Preserve the entire feature set, but implement in this order to ensure the frontend is usable quickly:
+
+Priority 1:
+- Design system and responsive layout.
+- Overview dashboard.
+- Live Shield interface.
+- Trust meter.
+- Detection indicators.
+- Explainability panel.
+- Red alert experience.
+- Navigation.
+
+Priority 2:
+- Attack Simulator.
+- Transcript scanner.
+- Money-request tripwire.
+- Challenge-response interface.
+- Random phrase challenge.
+- Callback and out-of-band verification demos.
+
+Priority 3:
+- Scam Replay.
+- Incident History.
+- Incident report export.
+- Trusted Contacts Vault.
+
+Priority 4:
+- Enterprise Security.
+- Benchmark Lab.
+- Privacy & Settings.
+- Multilingual UI foundations.
+- Accessibility refinements.
+
+Do not permanently omit lower-priority features. If necessary, create functional prototype implementations and clear integration placeholders.
+
+---
+
+## 21. FINAL QUALITY CHECK
+
+Before declaring the project complete:
+
+- Run the application and fix compilation errors.
+- Verify all navigation destinations.
+- Test all major buttons and interactive controls.
+- Check that the dashboard and Live Shield are responsive.
+- Verify that charts render.
+- Test denied camera and microphone permissions.
+- Ensure demo mode works without hardware access.
+- Ensure high-risk demo scenarios trigger alerts.
+- Ensure benign and inconclusive scenarios behave differently.
+- Verify that transcript examples trigger appropriate heuristic warnings.
+- Verify that contacts can be added, edited, and removed.
+- Verify incident filters and report export.
+- Check for console errors, missing assets, and broken routes.
+- Ensure the privacy notice is visible and accurate.
+- Ensure no simulated detection is presented as a real model result.
+- Confirm that the project starts successfully in Replit.
+
+Start building the complete frontend now. Prioritize a visually exceptional, working application with a strong Live Shield experience, while preserving the complete feature set and keeping the architecture ready for real deepfake-detection integration.
