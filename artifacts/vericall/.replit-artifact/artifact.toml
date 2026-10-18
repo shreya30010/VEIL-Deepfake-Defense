@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "VeriCall — Deepfake Defense"
+description = "An interactive browser-based security command center for monitoring video calls, exploring deepfake and voice-cloning risk signals, practicing verification workflows, and reviewing incidents. Demo detections are clearly labeled until validated analysis models are integrated."
+version = "1.0.0"
+id = "artifacts/vericall"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21884
+
+[services.development]
+run = "pnpm --filter @workspace/vericall run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/vericall", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/vericall/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21884"
+BASE_PATH = "/"
