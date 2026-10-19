@@ -28,6 +28,7 @@ export interface Contact {
   consent: boolean;
   status: string;
   verified: string;
+  safePhrase?: string;
 }
 
 export interface Incident {
@@ -95,4 +96,53 @@ export interface LanguageStrings {
   livenessChallenge: string;
   phraseChallenge: string;
   disclaimerBanner: string;
+}
+
+export interface AuthUser {
+  id: number;
+  email: string;
+  name: string;
+  role: 'Employee' | 'Approver' | 'Admin';
+}
+
+export interface PaymentRequest {
+  id: string;
+  submitterId: number;
+  submitterName: string;
+  claimedCaller: string;
+  callerPhone: string;
+  action: string;
+  amount: number;
+  payee: string;
+  bankAccount: string;
+  status: 'Verified' | 'On hold' | 'Approved' | 'Rejected' | 'Stop';
+  flags?: string | string[];
+  urgencyLanguage?: boolean;
+  approverId?: number | null;
+  approverName?: string | null;
+  approvalReason?: string | null;
+  decisionTimestamp?: string | null;
+  createdAt: string;
+}
+
+export interface Vendor {
+  id: number;
+  name: string;
+  bankName: string;
+  bankAccount: string;
+  routingCode: string;
+  approvalLimit: number;
+  verified: boolean;
+  createdAt: string;
+}
+
+export interface AuditLog {
+  id: number;
+  userId: number;
+  userName: string;
+  userRole: string;
+  action: string;
+  target: string;
+  details: string;
+  timestamp: string;
 }

@@ -1,0 +1,643 @@
+{
+  "sample_size": 20,
+  "sample_size_note": "Tested on 20 clips (10 authentic human, 10 synthetic vocoder recordings). Results are indicative only.",
+  "cpu_latency": {
+    "mean_ms": 428.4,
+    "min_ms": 311.3,
+    "max_ms": 562.7
+  },
+  "model_download_size_mb": 360.8,
+  "pretrained_model": {
+    "name": "Pretrained Model",
+    "model_id": "mo-thecreator/Deepfake-audio-detection",
+    "description": "an open-source pretrained wav2vec2 audio classifier",
+    "huggingface_url": "https://huggingface.co/mo-thecreator/Deepfake-audio-detection",
+    "accuracy_percent": 50.0,
+    "false_positive_rate_percent": 100.0,
+    "false_negative_rate_percent": 0.0,
+    "confusion_matrix": {
+      "true_positives": 10,
+      "true_negatives": 0,
+      "false_positives": 10,
+      "false_negatives": 0
+    }
+  },
+  "acoustic_heuristic": {
+    "name": "Acoustic Heuristic",
+    "accuracy_percent": 100.0,
+    "false_positive_rate_percent": 0.0,
+    "false_negative_rate_percent": 0.0,
+    "confusion_matrix": {
+      "true_positives": 10,
+      "true_negatives": 10,
+      "false_positives": 0,
+      "false_negatives": 0
+    }
+  },
+  "combination_dual_consensus": {
+    "name": "Combination (Dual Consensus: Both Must Flag)",
+    "accuracy_percent": 100.0,
+    "false_positive_rate_percent": 0.0,
+    "false_negative_rate_percent": 0.0,
+    "confusion_matrix": {
+      "true_positives": 10,
+      "true_negatives": 10,
+      "false_positives": 0,
+      "false_negatives": 0
+    }
+  },
+  "combination_average_prob": {
+    "name": "Combination (Average Probability >= 0.50)",
+    "accuracy_percent": 50.0,
+    "false_positive_rate_percent": 100.0,
+    "false_negative_rate_percent": 0.0,
+    "confusion_matrix": {
+      "true_positives": 10,
+      "true_negatives": 0,
+      "false_positives": 10,
+      "false_negatives": 0
+    }
+  },
+  "clips": [
+    {
+      "filename": "real/real_01.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 459.5,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00052,
+          "zcr_micro_jitter_std": 0.0099,
+          "energy_variance": 0.012797,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_02.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 312.4,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00052,
+          "zcr_micro_jitter_std": 0.0093,
+          "energy_variance": 0.011914,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_03.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 311.3,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00052,
+          "zcr_micro_jitter_std": 0.0099,
+          "energy_variance": 0.012558,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_04.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 314.4,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00051,
+          "zcr_micro_jitter_std": 0.0107,
+          "energy_variance": 0.012046,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_05.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 327.0,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00053,
+          "zcr_micro_jitter_std": 0.0102,
+          "energy_variance": 0.012111,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_06.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 392.9,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00051,
+          "zcr_micro_jitter_std": 0.0101,
+          "energy_variance": 0.012372,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_07.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 562.7,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00054,
+          "zcr_micro_jitter_std": 0.0099,
+          "energy_variance": 0.011755,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_08.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 414.2,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0005,
+          "zcr_micro_jitter_std": 0.0107,
+          "energy_variance": 0.011787,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_09.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 398.9,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0005,
+          "zcr_micro_jitter_std": 0.0104,
+          "energy_variance": 0.012636,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "real/real_10.wav",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 416.0,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00053,
+          "zcr_micro_jitter_std": 0.0102,
+          "energy_variance": 0.01238,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.52,
+        "verdict": "Possible synthetic speech (Single engine trigger)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_01.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 449.5,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_02.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 514.5,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_03.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 427.1,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_04.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 400.8,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_05.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 409.0,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_06.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 550.7,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_07.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 550.3,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_08.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 414.9,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_09.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 533.2,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_10.wav",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9929,
+        "latency_ms": 409.7,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0,
+          "zcr_micro_jitter_std": 0.048,
+          "energy_variance": 0.000513,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.0
+        },
+        "correct": true
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.95,
+        "verdict": "Elevated synthetic likelihood (Dual consensus)"
+      }
+    }
+  ]
+}

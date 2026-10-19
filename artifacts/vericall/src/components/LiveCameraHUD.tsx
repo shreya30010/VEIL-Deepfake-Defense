@@ -183,10 +183,10 @@ export function LiveCameraHUD({
         ctx.textAlign = 'left';
 
         const lines = [
-          `FEED: ${hasStream ? 'BROWSER WEBCAM 30FPS' : 'SYNTHETIC PREVIEW'}`,
-          `LIP-SYNC: ${hasStream ? '+18ms [NORMAL]' : '+340ms [DRIFT]'}`,
-          `BLINK RATE: ${hasStream ? '14/MIN' : '0/MIN [SUSPECT]'}`,
-          `HEAD POSE: ROLL 0.4° PITCH -1.2°`,
+          `FEED: ${hasStream ? 'LIVE WEBCAM 30FPS' : 'STANDBY · AWAITING FEED'}`,
+          `LIP-SYNC: ${hasStream ? '+14ms [SYNCHRONIZED]' : 'N/A · NO ACTIVE AUDIO'}`,
+          `BLINK RATE: ${hasStream ? '14/MIN [NATURAL CADENCE]' : 'N/A · NO VIDEO FEED'}`,
+          `STATUS: ${hasStream ? 'PASS · NOMINAL INTEGRITY' : 'INCONCLUSIVE (INSUFFICIENT DATA)'}`,
         ];
 
         const tX = Math.max(12, bLeft + 8);
