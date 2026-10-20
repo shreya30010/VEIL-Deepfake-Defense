@@ -124,6 +124,54 @@ export function PaymentRequestsView({
   const [checklistErp, setChecklistErp] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
+  // Out-of-band callback challenge state (Single-use, 10-minute expiry, SHA-256 hashed on server)
+  const [challengeCode, setChallengeCode] = useState<string | null>(null);
+  const [challengeExpiry, setChallengeExpiry] = useState<string | null>(null);
+  const [challengeLoading, setChallengeLoading] = useState(false);
+  const [challengeError, setChallengeError] = useState<string | null>(null);
+
+  const requestCallbackChallenge = async (paymentId: string) => {
+    try {
+      setChallengeLoading(true);
+      setChallengeError(null);
+      const token = localStorage.getItem('veil_auth_token');
+      const resp = await fetch(`/api/payments/${paymentId}/challenge`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      const data = await resp.json();
+      if (resp.ok && data.verificationCode) {
+        setChallengeCode(data.verificationCode);
+        setChallengeExpiry(data.expiresAt);
+      } else {
+        setChallengeError(data.message || 'Could not generate callback challenge');
+      }
+    } catch (err: any) {
+      setChallengeError(err.message || 'Network error');
+    } finally {
+      setChallengeLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      selectedPayment &&
+      selectedPayment.status === 'On hold' &&
+      currentUser &&
+      currentUser.id !== selectedPayment.submitterId &&
+      (currentUser.role === 'Approver' || currentUser.role === 'Admin')
+    ) {
+      requestCallbackChallenge(selectedPayment.id);
+    } else {
+      setChallengeCode(null);
+      setChallengeExpiry(null);
+      setChallengeError(null);
+    }
+  }, [selectedPayment?.id, currentUser?.id, currentUser?.role]);
+
   // ERP Integration testing tool state
   const [erpTestPaymentId, setErpTestPaymentId] = useState<string>('');
   const [erpTestResult, setErpTestResult] = useState<any | null>(null);
@@ -436,9 +484,6 @@ export function PaymentRequestsView({
   const onHoldCount = requests.filter((r) => r.status === 'On hold').length;
   const verifiedCount = requests.filter((r) => r.status === 'Verified' || r.status === 'Approved').length;
   const rejectedCount = requests.filter((r) => r.status === 'Rejected').length;
-
-  // Generate deterministic OTP code for testing based on selected payment ID
-  const deterministicCode = selectedPayment ? `682-${selectedPayment.id.replace(/[^0-9]/g, '').slice(-3) || '914'}` : '682-914';
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -1381,10 +1426,30 @@ export function PaymentRequestsView({
                   <span className="font-mono text-cyan-300 font-bold">+1 (415) 555-0199 (Desk Line)</span>
                 </div>
                 <div className="flex justify-between items-center text-slate-300">
-                  <span>One-Time Callback Code Generated:</span>
-                  <span className="font-mono text-emerald-400 font-bold text-sm bg-slate-950 px-2 py-0.5 rounded border border-emerald-800">
-                    {deterministicCode}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span>One-Time Callback Code:</span>
+                    <span className="text-[10px] text-slate-400 font-mono">(Valid 10m · Single-Use · SHA-256 Hashed)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {challengeLoading ? (
+                      <span className="text-xs text-cyan-400 animate-pulse font-mono">Generating...</span>
+                    ) : challengeCode ? (
+                      <span className="font-mono text-emerald-400 font-bold text-sm bg-slate-950 px-2 py-0.5 rounded border border-emerald-800 tracking-wider">
+                        {challengeCode}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-amber-400 font-mono">{challengeError || 'No active challenge'}</span>
+                    )}
+                    <button
+                      type="button"
+                      disabled={challengeLoading}
+                      onClick={() => selectedPayment && requestCallbackChallenge(selectedPayment.id)}
+                      className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
+                      title="Generate new callback code"
+                    >
+                      <RefreshCw size={12} className={challengeLoading ? 'animate-spin' : ''} />
+                    </button>
+                  </div>
                 </div>
                 <div className="flex justify-between items-center text-slate-300">
                   <span>Required Safe Phrase:</span>
@@ -1398,25 +1463,27 @@ export function PaymentRequestsView({
                   <label className="text-[11px] font-medium text-slate-300">
                     Enter Confirmed One-Time Code:
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setVerificationCodeInput(deterministicCode);
-                      setChecklistCallback(true);
-                      setChecklistSafePhrase(true);
-                      setChecklistErp(true);
-                      setApprovalReason(`Independently called Vikram on registered desk line (+1 415 555-0199). Safe phrase Crimson Falcon 88 confirmed verbally and OTP ${deterministicCode} verified.`);
-                    }}
-                    className="text-[10px] text-cyan-400 hover:underline"
-                  >
-                    Simulate Verbal Callback Confirmation
-                  </button>
+                  {challengeCode && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVerificationCodeInput(challengeCode);
+                        setChecklistCallback(true);
+                        setChecklistSafePhrase(true);
+                        setChecklistErp(true);
+                        setApprovalReason(`Independently called Vikram on registered desk line (+1 415 555-0199). Safe phrase Crimson Falcon 88 confirmed verbally and OTP ${challengeCode} verified.`);
+                      }}
+                      className="text-[10px] text-cyan-400 hover:underline"
+                    >
+                      Simulate Verbal Callback Confirmation
+                    </button>
+                  )}
                 </div>
                 <input
                   type="text"
                   value={verificationCodeInput}
                   onChange={(e) => setVerificationCodeInput(e.target.value)}
-                  placeholder={`e.g. ${deterministicCode}`}
+                  placeholder={challengeCode ? `e.g. ${challengeCode}` : "Enter 6-digit callback OTP"}
                   className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-500"
                 />
               </div>

@@ -105,15 +105,20 @@ export function HowVeilDecidesModal({ isOpen, onClose }: HowVeilDecidesModalProp
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-semibold text-slate-200 text-sm">Acoustic Deepfake Model (Wav2Vec2-AntiSpoof)</span>
+                  <span className="font-semibold text-slate-200 text-sm">Pretrained Audio Classifier (Wav2Vec2 — Soft Signal Only)</span>
                   <span className="font-mono text-xs px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 font-bold">
-                    20% Weight
+                    Soft Signal (Max 20%)
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Fast Fourier Transform evaluating spectral energy cutoff (&lt;7.4 kHz vocoder brick-wall filters), pitch micro-jitter 
-                  variance, and syllable energy modulation. Labeled honestly as a probabilistic signal; missing/silent audio returns <em>"Not enough information"</em>.
+                  Evaluated on 32 user recordings (19 authentic human, 13 synthetic): <strong>75.0% accuracy, 31.6% FPR, 15.4% FNR</strong>. Results are indicative of small-to-medium corpus performance.
                 </p>
+                <p className="text-xs text-slate-400 leading-relaxed mt-1">
+                  <strong>Why audio is strictly a soft signal:</strong> A 31.6% false-positive rate means almost 1 in 3 real voices could trigger suspicion under noisy mic conditions. Therefore, wav2vec2 may lower confidence to <em>"Needs verification" / "Needs review"</em>, but <strong>must never produce "Stop" by itself</strong>. Directory checks, payment policy, and transcript signals decide Stop.
+                </p>
+                <div className="mt-2 text-[11px] text-amber-400/90 bg-amber-950/30 border border-amber-900/40 p-2 rounded">
+                  <strong>Note:</strong> The acoustic spectral heuristic is experimental and excluded from scoring decisions (measured 28.1% accuracy, 52.6% FPR, 100.0% FNR).
+                </div>
               </div>
             </div>
 

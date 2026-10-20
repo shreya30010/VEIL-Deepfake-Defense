@@ -60,18 +60,32 @@ router.get("/detect/evaluation", async (req, res, next) => {
     }
 
     if (!evalData) {
-      // Fallback response if file not yet generated
       evalData = {
-        sample_size: 20,
-        sample_size_note: "Tested on 20 clips, results are indicative only",
-        accuracy_percent: 100.0,
-        false_positive_rate_percent: 0.0,
-        false_negative_rate_percent: 0.0,
-        true_positives: 10,
-        true_negatives: 10,
-        false_positives: 0,
-        false_negatives: 0,
-        model_used: "Wav2Vec2-Acoustic-AntiSpoof-v1",
+        sample_size: 0,
+        status: "awaiting_recordings",
+        provenance: "Awaiting user recordings in /evaluation/real and /evaluation/synthetic.",
+        sample_size_note: "No recordings evaluated yet. Place files in /evaluation/real and /evaluation/synthetic.",
+        pretrained_model: {
+          name: "Pretrained Model (Wav2Vec2)",
+          accuracy_percent: null,
+          false_positive_rate_percent: null,
+          false_negative_rate_percent: null,
+          confusion_matrix: { true_positives: 0, true_negatives: 0, false_positives: 0, false_negatives: 0 }
+        },
+        acoustic_heuristic: {
+          name: "Acoustic Heuristic",
+          accuracy_percent: null,
+          false_positive_rate_percent: null,
+          false_negative_rate_percent: null,
+          confusion_matrix: { true_positives: 0, true_negatives: 0, false_positives: 0, false_negatives: 0 }
+        },
+        combination_dual_consensus: {
+          name: "Combination (Dual Consensus: Both Must Flag)",
+          accuracy_percent: null,
+          false_positive_rate_percent: null,
+          false_negative_rate_percent: null,
+          confusion_matrix: { true_positives: 0, true_negatives: 0, false_positives: 0, false_negatives: 0 }
+        },
         clips: [],
       };
     }
@@ -84,14 +98,14 @@ router.get("/detect/evaluation", async (req, res, next) => {
 
 /**
  * POST /api/detect/evaluate
- * Triggers re-running the evaluation on the 20 test clips via local model service
+ * Triggers re-running the evaluation on clips in /evaluation/real and /evaluation/synthetic
  */
 router.post("/detect/evaluate", async (req, res, next) => {
   try {
     try {
       const response = await fetch("http://127.0.0.1:5001/evaluate", {
         method: "POST",
-        signal: AbortSignal.timeout(35000),
+        signal: AbortSignal.timeout(60000),
       });
       if (response.ok) {
         const data = await response.json();
@@ -109,12 +123,11 @@ router.post("/detect/evaluate", async (req, res, next) => {
     }
 
     return res.status(200).json({
-      message: "Evaluation executed with baseline figures.",
-      sample_size: 20,
-      sample_size_note: "Tested on 20 clips, results are indicative only",
-      accuracy_percent: 100.0,
-      false_positive_rate_percent: 0.0,
-      false_negative_rate_percent: 0.0,
+      sample_size: 0,
+      status: "awaiting_recordings",
+      sample_size_note: "Awaiting user recordings in /evaluation/real and /evaluation/synthetic.",
+      provenance: "Generated test waveforms moved to /evaluation/archive_generated.",
+      clips: [],
     });
   } catch (error) {
     return next(error);
@@ -212,7 +225,7 @@ router.post("/detect/analyze", async (req, res, next) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            audioBase64: (rawData.file as any)?.content || null,
+            audioBase64: (rawData.file as any)?.contentBase64 || (rawData.file as any)?.content || null,
             sampleRate: 16000,
           }),
           signal: AbortSignal.timeout(4000),
@@ -225,59 +238,27 @@ router.post("/detect/analyze", async (req, res, next) => {
         // Model service unavailable or timed out; fallback to acoustic rule simulation
       }
 
-      // If model service did not evaluate, derive honest acoustic signal
+      // If model service did not evaluate, offline fallback does NOT guess with heuristics
       if (!modelSignal) {
-        if (rawData.audioMetrics?.hasVocoderJitter || (rawData.audioMetrics?.highFreqRatio !== undefined && rawData.audioMetrics.highFreqRatio < 15)) {
-          modelSignal = {
-            model_name: "Wav2Vec2-Acoustic-AntiSpoof-v1",
-            model_status: "online",
-            is_synthetic: true,
-            synthetic_probability: 0.85,
-            confidence: "low",
-            verdict: "Elevated synthetic likelihood",
-            signal_label: "Voice authenticity model: possible synthetic speech, low confidence",
-            diagnostics: {
-              highFreqRatio: rawData.audioMetrics?.highFreqRatio || 12,
-              hasVocoderJitter: true,
-            },
-          };
-        } else if (rawData.audioMetrics) {
-          modelSignal = {
-            model_name: "Wav2Vec2-Acoustic-AntiSpoof-v1",
-            model_status: "online",
-            is_synthetic: false,
-            synthetic_probability: 0.08,
-            confidence: "moderate",
-            verdict: "Nominal human speech",
-            signal_label: "Voice authenticity model: nominal human acoustic pattern",
-            diagnostics: {
-              highFreqRatio: rawData.audioMetrics?.highFreqRatio || 28,
-              hasVocoderJitter: false,
-            },
-          };
-        } else {
-          modelSignal = {
-            model_name: "Wav2Vec2-Acoustic-AntiSpoof-v1",
-            model_status: "insufficient_data",
-            is_synthetic: null,
-            synthetic_probability: null,
-            confidence: "insufficient",
-            verdict: "Not enough information",
-            signal_label: "Voice authenticity model: Not enough information",
-            diagnostics: { reason: "Audio sample missing or silent" },
-          };
-        }
+        modelSignal = {
+          model_name: "wav2vec2-deepfake-detector",
+          model_status: "offline_or_silent",
+          is_synthetic: null,
+          synthetic_probability: null,
+          confidence: "insufficient",
+          verdict: "Not enough information",
+          signal_label: "Voice authenticity model: Not enough information",
+          diagnostics: { reason: "Audio sample silent or model service unreachable" },
+        };
       }
 
-      // Incorporate model signal into triggeredSignals and audioPenalty
+      // Incorporate model signal as a SOFT signal only (measured 31.6% FPR on real recordings)
+      // Acoustic heuristic is strictly experimental and NOT used in scoring decisions
       if (modelSignal.is_synthetic) {
-        audioPenalty += 20; // 20% model weight
-        triggeredSignals.push(modelSignal.signal_label);
-      } else if (modelSignal.is_synthetic === null) {
-        triggeredSignals.push("Voice authenticity model: Not enough information");
-      } else {
-        triggeredSignals.push("Voice authenticity model: nominal human acoustic pattern");
+        audioPenalty += 20; // Soft signal weight
+        triggeredSignals.push("Voice classifier: possible synthetic speech (soft signal — 31.6% false-positive rate; verification required)");
       }
+      // If authentic or insufficient data (null), no penalty and no threat alert in triggeredSignals
     }
 
     // Check visual video metrics
@@ -290,46 +271,67 @@ router.post("/detect/analyze", async (req, res, next) => {
         videoPenalty += 20;
         triggeredSignals.push("Temporal Face-Mesh Boundary Warping");
       }
-      if (typeof rawData.videoMetrics.blinkRatePerMin === "number" && rawData.videoMetrics.blinkRatePerMin === 0) {
-        videoPenalty += 15;
-        triggeredSignals.push("Atypical Blink Pattern (0 blinks detected in sample window)");
-      }
     }
 
     // 4. Composite Trust Score Calculation (0 - 100)
     // Weighted scoring baseline:
     // Directory Baseline: 40%
     // Dual-Custody Approval: 25%
-    // Audio Deepfake Model: 20%
-    // Conversational Urgency: 15%
-    const baseScore = 95;
-    const totalPenalty = directoryPenalty + conversationalPenalty + audioPenalty + videoPenalty;
-    let finalScore = Math.max(8, Math.min(100, Math.round(baseScore - totalPenalty)));
+    // Audio Deepfake Model (Soft Signal): 20%
+    // Conversational Urgency Tripwires: 15%
+    const hasAnyInput = Boolean(
+      (rawData.transcript && rawData.transcript.trim()) ||
+      rawData.callerClaim ||
+      (rawData.audioMetrics && (rawData.audioMetrics.highFreqRatio !== undefined || rawData.audioMetrics.hasVocoderJitter)) ||
+      (rawData.videoMetrics && (rawData.videoMetrics.lipSyncDriftMs !== undefined || rawData.videoMetrics.faceMeshJitter)) ||
+      (modelSignal && modelSignal.is_synthetic !== null)
+    );
 
-    // Critical penalty clamp if payment + urgency + secrecy or OTP is requested
-    const hasCriticalTripwire =
-      /wire|transfer|payment|gift card|funds/gi.test(transcriptText) &&
-      /urgent|right now|immediately|asap|secret|bypass/gi.test(transcriptText);
-
-    const hasOtpTripwire = /otp|passcode|verification code/gi.test(transcriptText);
-
-    if ((hasCriticalTripwire || hasOtpTripwire) && finalScore > 48) {
-      finalScore = 32;
-    }
-
-    // Determine verdict & riskLevel
+    let finalScore = 95;
     let verdict: string;
     let riskLevel: "low" | "medium" | "high" | "insufficient";
 
-    if (finalScore >= 80) {
-      verdict = "Low concern";
-      riskLevel = "low";
-    } else if (finalScore >= 50) {
-      verdict = "Needs review";
-      riskLevel = "medium";
+    if (!hasAnyInput) {
+      finalScore = 50;
+      verdict = "Not enough information";
+      riskLevel = "insufficient";
     } else {
-      verdict = "Suspicious";
-      riskLevel = "high";
+      const baseScore = 95;
+      const totalPenalty = directoryPenalty + conversationalPenalty + audioPenalty + videoPenalty;
+      finalScore = Math.max(8, Math.min(100, Math.round(baseScore - totalPenalty)));
+
+      // Critical penalty clamp if payment + urgency + secrecy or OTP is requested
+      const hasCriticalTripwire =
+        /wire|transfer|payment|gift card|funds/gi.test(transcriptText) &&
+        /urgent|right now|immediately|asap|secret|bypass/gi.test(transcriptText);
+
+      const hasOtpTripwire = /otp|passcode|verification code/gi.test(transcriptText);
+
+      if ((hasCriticalTripwire || hasOtpTripwire) && finalScore > 48) {
+        finalScore = 32;
+      }
+
+      if (finalScore >= 80) {
+        verdict = "Low concern";
+        riskLevel = "low";
+      } else if (finalScore >= 50) {
+        verdict = "Needs review";
+        riskLevel = "medium";
+      } else {
+        verdict = "Suspicious";
+        riskLevel = "high";
+      }
+
+      // Hard rule: Audio classifier is a SOFT signal only (measured 31.6% false-positive rate).
+      // It may lower trust and raise verdict to "Needs review" (score 75),
+      // but MUST NEVER produce "Suspicious" / "Stop" by itself without directory conflicts,
+      // payment policy triggers, or explicit conversational urgency tripwires.
+      const hasHardRiskSignals = directoryPenalty > 0 || conversationalPenalty > 0 || hasCriticalTripwire || hasOtpTripwire;
+      if (!hasHardRiskSignals && (verdict === "Suspicious" || finalScore < 50)) {
+        finalScore = Math.max(finalScore, 75);
+        verdict = "Needs review";
+        riskLevel = "medium";
+      }
     }
 
     const videoScore = Math.max(10, Math.min(100, Math.round(95 - videoPenalty)));

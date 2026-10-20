@@ -192,7 +192,37 @@ describe("VEIL Defense Platform Automated Test Suite", () => {
     assert.equal(heldData.status, "held");
     assert.equal(heldData.allowedToDisburse, false, "ERP must not disburse while held");
 
-    // 8b. Approver authorizes payment with Out-of-band verification code
+    // 8b. Approver initiates dynamic Out-of-band callback challenge
+    const challengeRes = await fetch(`${BASE_URL}/api/payments/${heldPaymentId}/challenge`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${approverToken}`,
+      },
+    });
+    assert.equal(challengeRes.status, 200, "Challenge generation should succeed");
+    const challengeData = await challengeRes.json();
+    assert.ok(challengeData.verificationCode, "Must return a 6-digit verification code");
+    assert.match(challengeData.verificationCode, /^\d{6}$/, "Code must be exactly 6 random digits");
+    assert.equal(challengeData.singleUse, true, "Challenge must be single-use");
+
+    // 8c. Test that incorrect code returns 400 InvalidVerificationCode
+    const badCodeRes = await fetch(`${BASE_URL}/api/payments/${heldPaymentId}/approve`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${approverToken}`,
+      },
+      body: JSON.stringify({
+        reason: "Testing invalid code rejection",
+        verificationCode: "000000",
+      }),
+    });
+    assert.equal(badCodeRes.status, 400, "Wrong OTP code must be rejected with 400");
+    const badCodeData = await badCodeRes.json();
+    assert.equal(badCodeData.error, "InvalidVerificationCode");
+
+    // 8d. Approver authorizes payment with dynamic Out-of-band verification code
     const approveRes = await fetch(`${BASE_URL}/api/payments/${heldPaymentId}/approve`, {
       method: "POST",
       headers: {
@@ -201,12 +231,26 @@ describe("VEIL Defense Platform Automated Test Suite", () => {
       },
       body: JSON.stringify({
         reason: "Independently verified with CEO Vikram via direct phone line. Safe phrase confirmed.",
-        verificationCode: "682-914",
+        verificationCode: challengeData.verificationCode,
       }),
     });
     assert.equal(approveRes.status, 200, "Approver authorization should succeed");
 
-    // 8c. Re-check external ERP endpoint (Disbursement must now be TRUE)
+    // 8e. Single-use enforcement: Attempting to reuse or re-approve must be rejected
+    const reusedRes = await fetch(`${BASE_URL}/api/payments/${heldPaymentId}/approve`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${approverToken}`,
+      },
+      body: JSON.stringify({
+        reason: "Testing single-use replay prevention",
+        verificationCode: challengeData.verificationCode,
+      }),
+    });
+    assert.equal(reusedRes.status, 400, "Reusing single-use code or re-approving must reject with 400");
+
+    // 8f. Re-check external ERP endpoint (Disbursement must now be TRUE)
     const clearedRes = await fetch(`${BASE_URL}/api/integrations/payments/${heldPaymentId}/status`, {
       headers: { "x-api-key": INTEGRATION_KEY },
     });

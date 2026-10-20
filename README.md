@@ -41,7 +41,7 @@ flowchart TD
         HUD["Live Shield Call Monitor"]
         SIM["Attack Simulator (60s Demo)"]
         PAY["Payment Requests & ERP Queue"]
-        LAB["Evaluation Lab (20-Clip Benchmark)"]
+        LAB["Evaluation Lab (32-Clip Benchmark)"]
         ONB["Interactive 4-Step Onboarding"]
     end
 
@@ -89,31 +89,40 @@ VEIL calculates an aggregate risk and trust determination using four weighted, c
 |---|:---:|---|---|
 | **1. Directory & Bank Account Baseline** | **40%** | Cross-references the caller's claimed identity against the internal Staff Directory and Approved Vendor Master List. Verifies bank account numbers, routing codes, and callback numbers. | **Automatic Hold**: Unmatched bank details or unverified phone numbers immediately flag the request as high-risk and freeze payment clearance. |
 | **2. Dual-Custody Approval Policy** | **25%** | Enforces the two-person rule for any financial authorization. An employee who submits a request **cannot approve it (Strict 403 Forbidden)**. Requires independent out-of-band verification by an authorized approver. | **Strict Policy Enforcement**: Transactions require a distinct Approver signature, verified phone callback challenge, and pre-shared safe phrase confirmation. |
-| **3. Dual Audio Deepfake ML** | **20%** | Dual-engine acoustic analysis: [an open-source pretrained wav2vec2 audio classifier](https://huggingface.co/mo-thecreator/Deepfake-audio-detection) evaluated side-by-side with a native acoustic heuristic (spectral cutoff <7.4 kHz, pitch micro-jitter, envelope variance). | **Probabilistic Signal**: Labeled transparently as *"possible synthetic speech, low confidence"* or *"nominal human acoustic pattern"*. Falls back to local heuristics if the Python model service is unreachable. |
+| **3. Pretrained Audio Classifier (Soft Signal)** | **20%** | [An open-source pretrained wav2vec2 audio classifier](https://huggingface.co/mo-thecreator/Deepfake-audio-detection) evaluated as a soft advisory signal. The acoustic heuristic is experimental and excluded from scoring decisions. | **Soft Signal Only**: Due to a measured 31.6% false-positive rate on human speech, audio may raise a request to *"Needs verification"* (trust score 75), but **never produces "Stop" by itself**. |
 | **4. Urgency Tripwires & Auto-Extraction** | **15%** | Rule-based conversational NLP scanning transcripts for coercion patterns (secrecy, bypassing protocol, immediate wire transfer) and extracting structured payment entities with sentence attribution. | **Tripwire Warning**: Injects caution flags into the decision record and alerts the reviewer to social engineering tactics. |
 
 ---
 
 ## 4. Real Audio Benchmark & Honest Evaluation Report
 
-To eliminate fake marketing numbers, VEIL evaluates both detection methods side-by-side on a standardized 20-clip benchmark corpus located in `/evaluation` (10 natural human speech recordings captured on consumer laptop microphones and 10 neural vocoder synthetic clips).
+To eliminate fake marketing claims, VEIL evaluates detection methods on a standardized 32-clip benchmark corpus located in `/evaluation` (19 authentic human recordings in `/evaluation/real` and 13 neural vocoder synthetic clips in `/evaluation/synthetic`). All clips are converted to 16 kHz, mono, 16-bit PCM WAV with zero threshold tuning.
 
-### Honest Evaluation Comparison Table
+> **Indicative Notice**: These benchmark metrics are indicative of small-to-medium corpus performance. The unvarnished numbers are reported below without tuning or smoothing.
 
-| Metric | Pretrained Wav2Vec2 Audio Classifier | Native Acoustic Heuristic Engine | VEIL Dual Consensus (ML + Heuristic) |
+### Honest Evaluation Comparison Table (Sample Size: 32 clips)
+
+| Metric | Pretrained Wav2Vec2 Classifier (Soft Signal) | Acoustic Heuristic Engine (Experimental) | VEIL Dual Consensus (Reference) |
 |---|:---:|:---:|:---:|
 | **Model Architecture** | [Pretrained Wav2Vec2](https://huggingface.co/mo-thecreator/Deepfake-audio-detection) | Spectral Cutoff + Jitter + Variance | Multi-layer Consensus |
-| **Accuracy** | **50.0%** (10/20 clips) | **100.0%** (20/20 clips) | **100.0%** (20/20 clips) |
-| **False Positive Rate (FPR)** | **100.0%** (10/10 real clips flagged) | **0.0%** (0/10 false alarms) | **0.0%** (0/10 false alarms) |
-| **False Negative Rate (FNR)** | **0.0%** (10/10 synthetics caught) | **0.0%** (10/10 synthetics caught) | **0.0%** (10/10 synthetics caught) |
-| **Average CPU Inference Latency** | ~428 ms per clip | < 15 ms per clip | ~435 ms per clip |
+| **Scoring Status** | **Active Soft Signal (Max 20%)** | **Experimental — Not Used in Scoring** | Reference Benchmark |
+| **Accuracy** | **75.0%** (24/32 clips) | **28.1%** (9/32 clips) | **56.2%** (18/32 clips) |
+| **False Positive Rate (FPR)** | **31.6%** (6/19 real clips flagged) | **52.6%** (10/19 false alarms) | **5.3%** (1/19 false alarms) |
+| **False Negative Rate (FNR)** | **15.4%** (2/13 synthetics missed) | **100.0%** (13/13 synthetics missed) | **100.0%** (13/13 synthetics missed) |
+| **Confusion Matrix** | TP: 11, TN: 13, FP: 6, FN: 2 | TP: 0, TN: 9, FP: 10, FN: 13 | TP: 0, TN: 18, FP: 1, FN: 13 |
+| **Average CPU Latency** | ~986 ms per clip | < 15 ms per clip | ~995 ms per clip |
 | **Download Size / Storage** | 360.8 MB (cached on first run) | 0 MB (built-in native math) | 360.8 MB |
-| **Sample Size** | 20 clips (10 real, 10 synthetic) | 20 clips (10 real, 10 synthetic) | 20 clips (10 real, 10 synthetic) |
+| **Sample Size** | 32 clips (19 real, 13 synthetic) | 32 clips (19 real, 13 synthetic) | 32 clips (19 real, 13 synthetic) |
 
-### Key Scientific Takeaway
-- **The Pretrained Model**: Achieved 100% detection on synthetic audio, but suffered a **100% False Positive Rate on real laptop recordings** because ambient room acoustics and consumer microphone noise floors triggered the model's synthetic classifier.
-- **Why This Matters**: If a company relied solely on the pretrained audio model, **every legitimate call would be blocked as a deepfake**.
-- **The VEIL Solution**: VEIL uses the model as an advisory signal while weighting Directory Baselines (40%) and Dual-Custody Approval (25%) to ensure genuine transactions clear smoothly while fraud is stopped cold.
+### Key Scientific Takeaways & Soft-Signal Rationale
+- **The Pretrained Wav2Vec2 Model**: Achieves 75.0% overall accuracy with an 84.6% recall on neural synthetic audio (100% on WhatsApp OGG voice clones), but carries a **31.6% False Positive Rate on authentic human recordings**. Microphone reverberation and lossy compression codecs (MP3/MPEG) cause the model to mistake human voices for synthetic speech.
+- **Why a 31.6% FPR Mandates Audio as a Soft Signal**: If audio detection alone were permitted to block transactions, nearly **1 in every 3 legitimate phone calls would be halted as an alleged deepfake**. Therefore, VEIL strictly enforces that the audio classifier **may raise a request to "Needs verification" / "Needs review", but must never produce "Stop" by itself**.
+- **The Acoustic Spectral Heuristic is Excluded from Scoring**: The native heuristic failed completely against modern neural vocoders (0% recall, 100% false-negative rate) while producing 52.6% false positives on real speech. It has been **completely removed from risk decisions** and is retained on the Evaluation page solely as an experimental reference.
+- **Per-Format Codec Effects (Transparency Breakdown)**:
+  - **MP3 (12 clips: 5 real, 7 synthetic)**: Wav2Vec2 achieves 66.7% accuracy with a 40.0% FPR due to lossy subband quantization noise.
+  - **MPEG (14 clips: 14 real, 0 synthetic)**: Authentic WhatsApp voice notes; Wav2Vec2 achieves 71.4% accuracy (28.6% FPR), while the heuristic suffered a 71.4% FPR.
+  - **OGG (6 clips: 0 real, 6 synthetic)**: Synthetic voice clones in WhatsApp Opus/OGG container; Wav2Vec2 achieved 100.0% accuracy (0% FNR), while the heuristic missed all 6 (100% FNR).
+- **Zero-Trust Enterprise Decision**: Conclusive "Stop" decisions are governed by hard enterprise controls: **Directory & Bank Account Baselines (40%)**, **Dual-Custody Approval Policy (25%)**, and **Conversational Tripwires (15%)**. Genuine transactions clear smoothly while financial fraud is stopped cold.
 
 ---
 
@@ -263,17 +272,18 @@ VEIL-Deepfake-Defense/
 │           │   ├── HowVeilDecidesModal.tsx # Transparent weighting & policy breakdown
 │           │   ├── AuthModal.tsx           # 1-click demo account switcher
 │           │   ├── PaymentRequestsView.tsx # Submissions, Auto-Extract & Mock ERP Queue
-│           │   ├── EvaluationLabView.tsx   # 20-clip side-by-side benchmark dashboard
+│           │   ├── EvaluationLabView.tsx   # 32-clip side-by-side benchmark dashboard
 │           │   ├── VendorsDirectoryView.tsx# Vendor directory & audit trail
 │           │   ├── WowAttackDemo.tsx       # Preserved 60-second interactive attack demo
 │           │   ├── LiveCameraHUD.tsx       # Live call monitor with facial reticles
 │           │   └── TrustMeter.tsx          # Rolling SVG trust score
 │           ├── types/veil.ts            # Type definitions
 │           └── App.tsx                  # Clean 7-module navigation & state
-├── evaluation/                          # 20 standardized test WAV clips & benchmark
-│   ├── real/                            # 10 consumer laptop mic recordings
-│   ├── synthetic/                       # 10 neural vocoder / TTS synthetic clips
-│   ├── evaluation_results.json          # Cached benchmark output
+├── evaluation/                          # 32 standardized test WAV clips & benchmark
+│   ├── real/                            # 19 authentic human recordings
+│   ├── synthetic/                       # 13 neural vocoder / TTS synthetic clips
+│   ├── evaluation_results.json          # Cached benchmark output (per-format breakdown)
+│   ├── sources.txt                      # Provenance map to original files
 │   └── README.md                        # Dataset documentation & sample size notes
 ├── tests/
 │   └── veil_test_suite.mjs              # 9 comprehensive automated tests (node:test)

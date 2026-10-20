@@ -84,7 +84,7 @@
    - Step 1: Point out the **Directory Phone Mismatch Warning**:
      - *Claimed incoming caller: +1 (555) 019-9481*
      - *Verified Directory line: +1 (555) 019-8820*
-   - Step 2: Click **"Initiate Out-of-Band Callback"**. A 6-digit challenge code (`682-xxx`) is generated.
+   - Step 2: Click **"Initiate Out-of-Band Callback"**. A cryptographically random 6-digit challenge code is generated (stored SHA-256 hashed, valid for 10 minutes, single-use).
    - Step 3: Enter the verification code and the verified safe phrase.
    - Click **"Release Hold & Approve Clearance"**.
 4. Switch back to the **Finance ERP Queue**:
@@ -96,11 +96,11 @@
 ### [3:00+] Conclusion: The Evaluation Lab
 
 **What to Say:**
-> *"Finally, we don't hide our machine learning numbers. If you open our **Evaluation Lab**, we benchmark an open-source pretrained Wav2Vec2 audio classifier side-by-side with our acoustic heuristics on 20 real and synthetic audio clips.*
+> *"Finally, we don't hide our machine learning numbers. In our **Evaluation Lab**, we benchmark an open-source pretrained Wav2Vec2 audio classifier against our acoustic heuristic across 32 real and synthetic audio clips (19 authentic human recordings, 13 synthetic clips).*
 > 
-> *The model alone has a 100% false positive rate on noisy laptop microphones. But when combined with VEIL's Dual Consensus and Directory Policy Gates, accuracy reaches 100% with zero false disbursements.*
+> *The unvarnished results are indicative: Wav2Vec2 achieved 75.0% accuracy with an 84.6% recall on neural deepfakes, but has a 31.6% false-positive rate on real human speech due to microphone acoustics and lossy compression. Meanwhile, the acoustic heuristic failed against modern neural vocoders (100% false-negative rate) and is excluded from risk scoring as experimental.*
 > 
-> *VEIL doesn't just guess voices. It defends your company's balance sheet."*
+> *That 31.6% false-positive rate is exactly why audio in VEIL is strictly a soft signal. Voice analysis can lower trust to 'Needs verification', but never produces 'Stop' on its own. Directory baseline checks, payment policy, and independent phone callbacks decide Stop. VEIL doesn't gamble company funds on noisy audio—it defends your balance sheet."*
 
 ---
 

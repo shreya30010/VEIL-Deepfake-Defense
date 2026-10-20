@@ -68,6 +68,19 @@ scratch/
 evaluation/*.wav
 evaluation/**/*.wav
 evaluation/*/*.wav
+evaluation/*.mp3
+evaluation/**/*.mp3
+evaluation/*/*.mp3
+
+# ML Model Weights and Caches
+*.bin
+*.pt
+*.safetensors
+*.onnx
+models/
+**/model_weights/
+**/.cache/
+.cache/
 
 # Nested extracts
 VEIL-Deepfake-Defense/

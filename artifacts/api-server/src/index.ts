@@ -1,3 +1,22 @@
+import path from "node:path";
+import fs from "node:fs";
+
+// Load environment configuration from .env if present
+try {
+  const envCandidates = [
+    path.resolve(process.cwd(), ".env"),
+    path.resolve(process.cwd(), "../../.env"),
+  ];
+  for (const envPath of envCandidates) {
+    if (fs.existsSync(envPath) && typeof (process as any).loadEnvFile === "function") {
+      (process as any).loadEnvFile(envPath);
+      break;
+    }
+  }
+} catch {
+  // Pass through if .env is missing or already loaded
+}
+
 import app from "./app";
 import { logger } from "./lib/logger";
 

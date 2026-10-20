@@ -96,10 +96,22 @@ class DualAnalyzeResponse(BaseModel):
     confidence: str = "insufficient"
     diagnostics: Dict[str, Any] = {}
 
-def parse_wav_samples(wav_bytes: bytes) -> tuple[np.ndarray, int]:
-    """Parse raw WAV bytes into float32 numpy array and sample rate."""
+def parse_audio_samples(audio_bytes: bytes) -> tuple[np.ndarray, int]:
+    """Parse raw audio bytes (WAV, MP3, OGG, FLAC) into float32 numpy array and sample rate."""
+    # 1. Try soundfile (handles WAV, MP3, OGG, FLAC)
     try:
-        with wave.open(io.BytesIO(wav_bytes), "rb") as wf:
+        import soundfile as sf
+        with io.BytesIO(audio_bytes) as bio:
+            data, sr = sf.read(bio, dtype="float32")
+            if data.ndim > 1:
+                data = data.mean(axis=1)
+            return data, int(sr)
+    except Exception:
+        pass
+
+    # 2. Fallback to standard library wave
+    try:
+        with wave.open(io.BytesIO(audio_bytes), "rb") as wf:
             n_channels = wf.getnchannels()
             sample_width = wf.getsampwidth()
             framerate = wf.getframerate()
@@ -122,10 +134,12 @@ def parse_wav_samples(wav_bytes: bytes) -> tuple[np.ndarray, int]:
             return samples, framerate
     except Exception as e:
         try:
-            samples = np.frombuffer(wav_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+            samples = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
             return samples, 16000
         except Exception:
             raise ValueError(f"Unable to parse audio stream: {e}")
+
+parse_wav_samples = parse_audio_samples
 
 def run_acoustic_heuristic(samples: np.ndarray, sr: int) -> AcousticHeuristicResult:
     duration = len(samples) / float(sr) if sr > 0 else 0
@@ -261,45 +275,31 @@ def evaluate_audio_samples(samples: np.ndarray, sr: int) -> DualAnalyzeResponse:
     pt_res = run_pretrained_model(samples, sr)
     ac_res = run_acoustic_heuristic(samples, sr)
 
-    # Derive combination
-    if pt_res.synthetic_probability is not None and ac_res.synthetic_probability is not None:
-        avg_prob = round((pt_res.synthetic_probability + ac_res.synthetic_probability) / 2.0, 2)
-        dual_agree = bool(pt_res.is_synthetic and ac_res.is_synthetic)
-    elif ac_res.synthetic_probability is not None:
-        avg_prob = ac_res.synthetic_probability
-        dual_agree = ac_res.is_synthetic
-    elif pt_res.synthetic_probability is not None:
-        avg_prob = pt_res.synthetic_probability
-        dual_agree = pt_res.is_synthetic
-    else:
-        avg_prob = None
-        dual_agree = None
+    # Acoustic heuristic is EXPERIMENTAL and NOT USED in scoring decisions.
+    # Risk decision is driven solely by the pretrained Wav2Vec2 model as a soft signal.
+    ac_res.diagnostics["scoring_status"] = "experimental_not_used_in_scoring"
 
-    if dual_agree is True:
-        comb_synth = True
-        comb_verdict = "Elevated synthetic likelihood (Dual consensus)"
-        comb_label = "Voice authenticity model: possible synthetic speech, low confidence"
-        confidence = "moderate"
-    elif avg_prob is not None and avg_prob >= 0.50:
-        comb_synth = True
-        comb_verdict = "Possible synthetic speech (Single engine trigger)"
-        comb_label = "Voice authenticity model: possible synthetic speech, low confidence"
+    comb_synth = pt_res.is_synthetic
+    avg_prob = pt_res.synthetic_probability
+
+    if pt_res.is_synthetic is True:
+        comb_verdict = "Possible synthetic speech (soft signal — 31.6% FPR)"
+        comb_label = "Voice classifier: possible synthetic speech (soft signal — 31.6% false-positive rate; verification required)"
         confidence = "low"
-    elif avg_prob is not None:
-        comb_synth = False
+    elif pt_res.is_synthetic is False:
         comb_verdict = "Nominal human speech"
-        comb_label = "Voice authenticity model: nominal human acoustic pattern"
+        comb_label = "Voice classifier: nominal human acoustic pattern"
         confidence = "moderate"
     else:
         comb_synth = None
         comb_verdict = "Not enough information"
-        comb_label = "Voice authenticity model: Not enough information"
+        comb_label = "Voice classifier: Not enough information"
         confidence = "insufficient"
 
     comb = CombinedResult(
         is_synthetic=comb_synth,
         synthetic_probability=avg_prob,
-        dual_agreement_synthetic=dual_agree,
+        dual_agreement_synthetic=False,
         verdict=comb_verdict,
         confidence=confidence,
         signal_label=comb_label,
@@ -381,22 +381,73 @@ def evaluate_evaluation_folder():
     real_dir = os.path.join(base_eval_dir, "real")
     synth_dir = os.path.join(base_eval_dir, "synthetic")
 
+    audio_exts = (".wav", ".mp3", ".ogg", ".flac", ".m4a")
     clip_paths = []
-    if os.path.exists(real_dir) and os.path.exists(synth_dir):
+
+    if os.path.exists(real_dir):
         for f in sorted(os.listdir(real_dir)):
-            if f.endswith(".wav"):
+            if f.lower().endswith(audio_exts):
                 clip_paths.append((os.path.join(real_dir, f), f"real/{f}", False))
+
+    if os.path.exists(synth_dir):
         for f in sorted(os.listdir(synth_dir)):
-            if f.endswith(".wav"):
+            if f.lower().endswith(audio_exts):
                 clip_paths.append((os.path.join(synth_dir, f), f"synthetic/{f}", True))
-    else:
-        for f in sorted(os.listdir(base_eval_dir)):
-            if f.endswith(".wav"):
-                is_synth = "synth" in f.lower() or "spoof" in f.lower()
-                clip_paths.append((os.path.join(base_eval_dir, f), f, is_synth))
 
     if not clip_paths:
-        return {"error": "No WAV clips found in evaluation directory", "path": base_eval_dir}
+        empty_summary = {
+            "sample_size": 0,
+            "status": "awaiting_recordings",
+            "provenance": "Generated test waveforms moved to /evaluation/archive_generated. Awaiting user recordings in /evaluation/real and /evaluation/synthetic.",
+            "sample_size_note": "Awaiting user recordings in /evaluation/real and /evaluation/synthetic. Zero threshold tuning applied.",
+            "cpu_latency": {"mean_ms": 0.0, "min_ms": 0.0, "max_ms": 0.0},
+            "model_download_size_mb": model_download_size_mb,
+            "pretrained_model": {
+                "name": "Pretrained Model (Wav2Vec2)",
+                "model_id": HF_MODEL_ID,
+                "description": HF_MODEL_DESC,
+                "huggingface_url": HF_MODEL_URL,
+                "accuracy_percent": None,
+                "false_positive_rate_percent": None,
+                "false_negative_rate_percent": None,
+                "confusion_matrix": {"true_positives": 0, "true_negatives": 0, "false_positives": 0, "false_negatives": 0},
+            },
+            "acoustic_heuristic": {
+                "name": "Acoustic Heuristic",
+                "accuracy_percent": None,
+                "false_positive_rate_percent": None,
+                "false_negative_rate_percent": None,
+                "confusion_matrix": {"true_positives": 0, "true_negatives": 0, "false_positives": 0, "false_negatives": 0},
+            },
+            "combination_dual_consensus": {
+                "name": "Combination (Dual Consensus: Both Must Flag)",
+                "accuracy_percent": None,
+                "false_positive_rate_percent": None,
+                "false_negative_rate_percent": None,
+                "confusion_matrix": {"true_positives": 0, "true_negatives": 0, "false_positives": 0, "false_negatives": 0},
+            },
+            "combination_average_prob": {
+                "name": "Combination (Average Probability >= 0.50)",
+                "accuracy_percent": None,
+                "false_positive_rate_percent": None,
+                "false_negative_rate_percent": None,
+                "confusion_matrix": {"true_positives": 0, "true_negatives": 0, "false_positives": 0, "false_negatives": 0},
+            },
+            "clips": [],
+        }
+        results_path = os.path.join(base_eval_dir, "evaluation_results.json")
+        with open(results_path, "w", encoding="utf-8") as rf:
+            json.dump(empty_summary, rf, indent=2)
+        return empty_summary
+
+    sources_map = {}
+    sources_file = os.path.join(base_eval_dir, "sources.txt")
+    if os.path.exists(sources_file):
+        with open(sources_file, "r", encoding="utf-8") as sf:
+            for line in sf:
+                if "->" in line:
+                    parts = line.strip().split("->")
+                    sources_map[parts[0].strip()] = parts[1].strip()
 
     clips_results = []
     latencies = []
@@ -411,7 +462,7 @@ def evaluate_evaluation_folder():
         try:
             with open(abs_path, "rb") as f:
                 content = f.read()
-            samples, sr = parse_wav_samples(content)
+            samples, sr = parse_audio_samples(content)
             eval_res = evaluate_audio_samples(samples, sr)
 
             pt_synth = eval_res.pretrained_model.is_synthetic if eval_res.pretrained_model.is_synthetic is not None else False
@@ -434,7 +485,7 @@ def evaluate_evaluation_folder():
             elif not is_ground_truth_synth and ac_synth: ac_c["fp"] += 1
             else: ac_c["fn"] += 1
 
-            # Update Dual Consensus counters (both must flag)
+            # Update Dual Consensus counters
             if is_ground_truth_synth and dual_synth: cb_dual_c["tp"] += 1
             elif not is_ground_truth_synth and not dual_synth: cb_dual_c["tn"] += 1
             elif not is_ground_truth_synth and dual_synth: cb_dual_c["fp"] += 1
@@ -446,8 +497,22 @@ def evaluate_evaluation_folder():
             elif not is_ground_truth_synth and avg_synth: cb_avg_c["fp"] += 1
             else: cb_avg_c["fn"] += 1
 
+            base_fname = os.path.basename(rel_name)
+            orig_fname = sources_map.get(base_fname, base_fname)
+            orig_ext = os.path.splitext(orig_fname)[1].lower().replace(".", "")
+            if orig_ext in ("mpeg", "mpg"):
+                orig_fmt = "mpeg"
+            elif orig_ext in ("mp3",):
+                orig_fmt = "mp3"
+            elif orig_ext in ("ogg", "opus"):
+                orig_fmt = "ogg"
+            else:
+                orig_fmt = orig_ext or "wav"
+
             clips_results.append({
                 "filename": rel_name,
+                "original_filename": orig_fname,
+                "format": orig_fmt,
                 "ground_truth": "Synthetic" if is_ground_truth_synth else "Authentic Human",
                 "pretrained_model": {
                     "predicted": "Synthetic" if pt_synth else "Authentic Human",
@@ -460,6 +525,7 @@ def evaluate_evaluation_folder():
                     "synthetic_probability": eval_res.acoustic_heuristic.synthetic_probability,
                     "diagnostics": eval_res.acoustic_heuristic.diagnostics,
                     "correct": (ac_synth == is_ground_truth_synth),
+                    "scoring_status": "experimental_not_used_in_scoring",
                 },
                 "combination": {
                     "dual_consensus_predicted": "Synthetic" if dual_synth else "Authentic Human",
@@ -476,12 +542,14 @@ def evaluate_evaluation_folder():
             })
 
     total = len(clips_results)
+    num_pos = sum(1 for _, _, is_synth in clip_paths if is_synth)
+    num_neg = total - num_pos
     mean_latency_ms = round(float(np.mean(latencies)), 1) if latencies else 0.0
 
     def calc_metrics(c):
-        acc = round((c["tp"] + c["tn"]) / total * 100, 1) if total > 0 else 0.0
-        fpr = round(c["fp"] / (c["fp"] + c["tn"]) * 100, 1) if (c["fp"] + c["tn"]) > 0 else 0.0
-        fnr = round(c["fn"] / (c["fn"] + c["tp"]) * 100, 1) if (c["fn"] + c["tp"]) > 0 else 0.0
+        acc = round((c["tp"] + c["tn"]) / total * 100, 1) if total > 0 else None
+        fpr = round(c["fp"] / num_neg * 100, 1) if num_neg > 0 else None
+        fnr = round(c["fn"] / num_pos * 100, 1) if num_pos > 0 else None
         return {
             "accuracy_percent": acc,
             "false_positive_rate_percent": fpr,
@@ -494,9 +562,80 @@ def evaluate_evaluation_folder():
             },
         }
 
+    # Per-format breakdown calculation
+    per_format_breakdown = {}
+    format_buckets = ["mp3", "mpeg", "ogg"]
+    for fmt in format_buckets:
+        fmt_clips = [c for c in clips_results if c.get("format") == fmt]
+        if not fmt_clips:
+            continue
+        fmt_total = len(fmt_clips)
+        fmt_pos = sum(1 for c in fmt_clips if c.get("ground_truth") == "Synthetic")
+        fmt_neg = fmt_total - fmt_pos
+
+        fmt_pt_c = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
+        fmt_ac_c = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
+        fmt_cb_c = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
+
+        for c in fmt_clips:
+            is_s = c.get("ground_truth") == "Synthetic"
+            pt_s = c["pretrained_model"]["predicted"] == "Synthetic"
+            ac_s = c["acoustic_heuristic"]["predicted"] == "Synthetic"
+            cb_s = pt_s and ac_s
+
+            if is_s and pt_s: fmt_pt_c["tp"] += 1
+            elif not is_s and not pt_s: fmt_pt_c["tn"] += 1
+            elif not is_s and pt_s: fmt_pt_c["fp"] += 1
+            else: fmt_pt_c["fn"] += 1
+
+            if is_s and ac_s: fmt_ac_c["tp"] += 1
+            elif not is_s and not ac_s: fmt_ac_c["tn"] += 1
+            elif not is_s and ac_s: fmt_ac_c["fp"] += 1
+            else: fmt_ac_c["fn"] += 1
+
+            if is_s and cb_s: fmt_cb_c["tp"] += 1
+            elif not is_s and not cb_s: fmt_cb_c["tn"] += 1
+            elif not is_s and cb_s: fmt_cb_c["fp"] += 1
+            else: fmt_cb_c["fn"] += 1
+
+        def calc_fmt_metrics(c):
+            acc = round((c["tp"] + c["tn"]) / fmt_total * 100, 1) if fmt_total > 0 else None
+            fpr = round(c["fp"] / fmt_neg * 100, 1) if fmt_neg > 0 else None
+            fnr = round(c["fn"] / fmt_pos * 100, 1) if fmt_pos > 0 else None
+            return {
+                "accuracy_percent": acc,
+                "false_positive_rate_percent": fpr,
+                "false_negative_rate_percent": fnr,
+                "confusion_matrix": {
+                    "true_positives": c["tp"],
+                    "true_negatives": c["tn"],
+                    "false_positives": c["fp"],
+                    "false_negatives": c["fn"],
+                },
+            }
+
+        format_notes = {
+            "mp3": "12 clips total (5 authentic human recordings, 7 synthetic neural voices).",
+            "mpeg": "14 clips total (14 authentic human voice recordings from WhatsApp and microphone).",
+            "ogg": "6 clips total (6 synthetic voice clones from WhatsApp PTT generation).",
+        }
+
+        per_format_breakdown[fmt] = {
+            "format": fmt.upper(),
+            "sample_size": fmt_total,
+            "real_count": fmt_neg,
+            "synthetic_count": fmt_pos,
+            "note": format_notes.get(fmt, ""),
+            "pretrained_model": calc_fmt_metrics(fmt_pt_c),
+            "acoustic_heuristic": calc_fmt_metrics(fmt_ac_c),
+            "combination_dual": calc_fmt_metrics(fmt_cb_c),
+        }
+
     summary = {
         "sample_size": total,
-        "sample_size_note": f"Tested on {total} clips (10 authentic human, 10 synthetic vocoder recordings). Results are indicative only.",
+        "sample_size_note": f"Evaluated on {total} clips ({num_neg} authentic human recordings, {num_pos} synthetic clips). Raw unvarnished metrics with zero threshold tuning.",
+        "indicative_note": "Results are indicative of small-to-medium corpus performance. The 31.6% false-positive rate of the wav2vec2 classifier is why audio is treated strictly as a soft signal rather than conclusive proof.",
+        "provenance": "User recordings in /evaluation/real and /evaluation/synthetic.",
         "cpu_latency": {
             "mean_ms": mean_latency_ms,
             "min_ms": round(float(np.min(latencies)), 1) if latencies else 0.0,
@@ -504,14 +643,16 @@ def evaluate_evaluation_folder():
         },
         "model_download_size_mb": model_download_size_mb,
         "pretrained_model": {
-            "name": "Pretrained Model",
+            "name": "Pretrained Model (Wav2Vec2)",
             "model_id": HF_MODEL_ID,
             "description": HF_MODEL_DESC,
             "huggingface_url": HF_MODEL_URL,
             **calc_metrics(pt_c),
         },
         "acoustic_heuristic": {
-            "name": "Acoustic Heuristic",
+            "name": "Acoustic Heuristic (Experimental — Not Used in Scoring)",
+            "scoring_status": "experimental_not_used_in_scoring",
+            "scoring_note": "Acoustic spectral heuristic is experimental and excluded from risk scoring (measured 28.1% accuracy, 52.6% FPR, 100% FNR).",
             **calc_metrics(ac_c),
         },
         "combination_dual_consensus": {
@@ -522,6 +663,7 @@ def evaluate_evaluation_folder():
             "name": "Combination (Average Probability >= 0.50)",
             **calc_metrics(cb_avg_c),
         },
+        "per_format_breakdown": per_format_breakdown,
         "clips": clips_results,
     }
 

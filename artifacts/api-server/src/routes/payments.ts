@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from "express";
+import crypto from "node:crypto";
 import { z } from "@workspace/api-zod";
 import {
   db,
@@ -12,6 +13,16 @@ import {
 import { requireAuth, requireRole, logAudit } from "../lib/auth";
 
 const paymentsRouter = Router();
+
+// In-memory store for out-of-band callback confirmation codes
+// Codes are stored as SHA-256 hashes, valid for 10 minutes, and strictly single-use
+interface CallbackChallenge {
+  paymentId: string;
+  codeHash: string; // SHA-256 digest of 6-digit code
+  expiresAt: number; // Expiry timestamp
+  used: boolean;
+}
+const callbackChallenges = new Map<string, CallbackChallenge>();
 
 const createPaymentSchema = z.object({
   claimedCaller: z.string().min(1, "Claimed caller name is required"),
@@ -358,6 +369,72 @@ paymentsRouter.post("/payments", requireAuth, async (req: Request, res: Response
   }
 });
 
+// POST /api/payments/:id/challenge - Generate a single-use, 10-minute 6-digit callback challenge
+paymentsRouter.post(
+  "/payments/:id/challenge",
+  requireAuth,
+  requireRole("Approver", "Admin"),
+  async (req: Request, res: Response): Promise<void> => {
+    const paymentId = String(req.params.id);
+    const user = req.user!;
+
+    try {
+      const payment = await db
+        .select()
+        .from(paymentRequestsTable)
+        .where(eq(paymentRequestsTable.id, paymentId))
+        .get();
+
+      if (!payment) {
+        res.status(404).json({ error: "NotFound", message: "Payment request not found" });
+        return;
+      }
+
+      // Enforce two-person separation on generating callback challenge as well
+      if (payment.submitterId === user.id) {
+        res.status(403).json({
+          error: "SelfApprovalForbidden",
+          message: "Two-person rule violation: You cannot generate or review callback challenges for payment requests you submitted yourself.",
+          statusCode: 403,
+        });
+        return;
+      }
+
+      // Cryptographically random 6-digit numeric code (e.g. "849201")
+      const rawCode = crypto.randomInt(100000, 1000000).toString();
+      // Store ONLY the SHA-256 hash in memory (never the plain text)
+      const codeHash = crypto.createHash("sha256").update(rawCode).digest("hex");
+      const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+      callbackChallenges.set(paymentId, {
+        paymentId,
+        codeHash,
+        expiresAt,
+        used: false,
+      });
+
+      await logAudit({
+        userId: user.id,
+        userName: user.name,
+        userRole: user.role,
+        action: "GENERATE_CALLBACK_CHALLENGE",
+        target: `payment_requests:${paymentId}`,
+        details: `Generated out-of-band callback confirmation challenge for held payment ${paymentId}. Stored SHA-256 hash, expires in 10 minutes, single-use.`,
+      });
+
+      res.json({
+        paymentId,
+        verificationCode: rawCode,
+        expiresAt: new Date(expiresAt).toISOString(),
+        expiresInSeconds: 600,
+        singleUse: true,
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: "DatabaseError", message: err.message });
+    }
+  }
+);
+
 // POST /api/payments/:id/approve - Two-Person Rule: Different user with Approver/Admin role
 paymentsRouter.post(
   "/payments/:id/approve",
@@ -399,6 +476,61 @@ paymentsRouter.post(
       if (payment.status === "Approved") {
         res.status(400).json({ error: "AlreadyApproved", message: "Payment request is already approved" });
         return;
+      }
+
+      // Out-Of-Band Callback Verification Code check for held payments
+      if (payment.status === "On hold") {
+        if (!verificationCode || verificationCode.trim() === "") {
+          res.status(400).json({
+            error: "VerificationCodeRequired",
+            message: "An out-of-band callback confirmation code is required to release a held payment. Initiate a callback challenge to receive a single-use 6-digit code.",
+            statusCode: 400,
+          });
+          return;
+        }
+
+        const challenge = callbackChallenges.get(paymentId);
+        if (!challenge) {
+          res.status(400).json({
+            error: "NoActiveChallenge",
+            message: "No active callback challenge exists for this payment. Please generate an out-of-band callback challenge before approval.",
+            statusCode: 400,
+          });
+          return;
+        }
+
+        if (challenge.used) {
+          res.status(400).json({
+            error: "CodeAlreadyUsed",
+            message: "This callback verification code has already been consumed. Each out-of-band code is strictly single-use. Please generate a new challenge.",
+            statusCode: 400,
+          });
+          return;
+        }
+
+        if (Date.now() > challenge.expiresAt) {
+          callbackChallenges.delete(paymentId);
+          res.status(400).json({
+            error: "CodeExpired",
+            message: "This callback verification code has expired (10-minute validity exceeded). Please generate a new challenge.",
+            statusCode: 400,
+          });
+          return;
+        }
+
+        const cleanInput = verificationCode.trim().replace(/\s+/g, "");
+        const inputHash = crypto.createHash("sha256").update(cleanInput).digest("hex");
+        if (inputHash !== challenge.codeHash) {
+          res.status(400).json({
+            error: "InvalidVerificationCode",
+            message: "The entered callback verification code does not match the active challenge. Please re-check the verbal code confirmed during your phone callback.",
+            statusCode: 400,
+          });
+          return;
+        }
+
+        // Mark code as used immediately (single-use constraint)
+        challenge.used = true;
       }
 
       const now = new Date().toISOString();
@@ -526,12 +658,12 @@ paymentsRouter.get(
   "/integrations/payments/:id/status",
   async (req: Request, res: Response): Promise<void> => {
     const apiKey = (req.headers["x-api-key"] as string | undefined) || (req.query.api_key as string | undefined);
-    const EXPECTED_KEY = process.env.ERP_INTEGRATION_KEY || "veil_erp_secret_key_2026";
+    const EXPECTED_KEY = process.env.ERP_GATE_API_KEY || process.env.ERP_INTEGRATION_KEY || "veil_erp_secret_key_2026";
 
     if (!apiKey || apiKey !== EXPECTED_KEY) {
       res.status(401).json({
         error: "Unauthorized",
-        message: "Invalid or missing integration API key. Provide header 'x-api-key: veil_erp_secret_key_2026' or query param ?api_key=veil_erp_secret_key_2026",
+        message: "Invalid or missing integration API key. Provide header 'x-api-key' or query parameter '?api_key'",
       });
       return;
     }

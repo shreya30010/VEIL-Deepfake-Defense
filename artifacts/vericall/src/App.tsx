@@ -1370,7 +1370,7 @@ function Overview({
             <FileCheck size={14} /> Evaluation Lab
           </div>
           <p className="text-[11px] text-slate-400">
-            Real 20-clip benchmark test (100% accuracy, 0% FPR/FNR on speech corpus).
+            Real 32-clip benchmark (Wav2Vec2: 75.0% accuracy, 31.6% FPR; acoustic heuristic: experimental).
           </p>
         </button>
 
@@ -1559,18 +1559,18 @@ function LiveShield({
             />
             <div className="grid grid-2 text-xs gap-2 mt-3">
               <div className="p-2 bg-slate-900/60 rounded border border-slate-800">
-                <span className="text-[10px] text-slate-400 block font-mono">1. Pretrained Model</span>
+                <span className="text-[10px] text-slate-400 block font-mono">1. Pretrained Model (Soft Signal)</span>
                 <span className={`font-mono text-[11px] font-semibold ${monitoring && Boolean(mediaStream && mediaStream.getAudioTracks().length) ? 'text-cyan-400' : 'text-slate-400'}`}>
                   {monitoring && Boolean(mediaStream && mediaStream.getAudioTracks().length) ? 'Wav2Vec2: Nominal' : 'Not enough information'}
                 </span>
                 <span className="text-[9px] text-slate-500 block">mo-thecreator/Deepfake-audio-detection</span>
               </div>
               <div className="p-2 bg-slate-900/60 rounded border border-slate-800">
-                <span className="text-[10px] text-slate-400 block font-mono">2. Acoustic Heuristic</span>
-                <span className={`font-mono text-[11px] font-semibold ${monitoring && Boolean(mediaStream && mediaStream.getAudioTracks().length) ? 'text-emerald-400' : 'text-slate-400'}`}>
-                  {monitoring && Boolean(mediaStream && mediaStream.getAudioTracks().length) ? 'Acoustic: Nominal' : 'Not enough information'}
+                <span className="text-[10px] text-slate-400 block font-mono">2. Acoustic Heuristic (Experimental)</span>
+                <span className={`font-mono text-[11px] font-semibold ${monitoring && Boolean(mediaStream && mediaStream.getAudioTracks().length) ? 'text-amber-400' : 'text-slate-400'}`}>
+                  {monitoring && Boolean(mediaStream && mediaStream.getAudioTracks().length) ? 'Excluded from scoring' : 'Not enough information'}
                 </span>
-                <span className="text-[9px] text-slate-500 block">&gt;7.4 kHz Nyquist &amp; Jitter</span>
+                <span className="text-[9px] text-slate-500 block">Experimental · Not used in scoring</span>
               </div>
             </div>
           </Panel>
