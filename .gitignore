@@ -98,3 +98,8 @@ artifacts/vericall/.netlify/
 __pycache__/
 *.pyc
 .env.old
+
+artifacts/vericall/.netlify/
+__pycache__/
+*.pyc
+.env.old
