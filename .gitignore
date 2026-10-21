@@ -103,3 +103,8 @@ artifacts/vericall/.netlify/
 __pycache__/
 *.pyc
 .env.old
+
+__pycache__/
+*.pyc
+artifacts/vericall/.netlify/
+.env.old
