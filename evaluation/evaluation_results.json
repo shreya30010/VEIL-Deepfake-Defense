@@ -1,0 +1,1245 @@
+{
+  "sample_size": 32,
+  "sample_size_note": "Evaluated on 32 clips (19 authentic human recordings, 13 synthetic clips). Raw unvarnished metrics with zero threshold tuning.",
+  "indicative_note": "Results are indicative of small-to-medium corpus performance. The 31.6% false-positive rate of the wav2vec2 classifier is why audio is treated strictly as a soft signal rather than conclusive proof.",
+  "provenance": "User recordings in /evaluation/real and /evaluation/synthetic.",
+  "cpu_latency": {
+    "mean_ms": 841.8,
+    "min_ms": 515.7,
+    "max_ms": 2922.9
+  },
+  "model_download_size_mb": 360.8,
+  "pretrained_model": {
+    "name": "Pretrained Model (Wav2Vec2)",
+    "model_id": "mo-thecreator/Deepfake-audio-detection",
+    "description": "an open-source pretrained wav2vec2 audio classifier",
+    "huggingface_url": "https://huggingface.co/mo-thecreator/Deepfake-audio-detection",
+    "accuracy_percent": 75.0,
+    "false_positive_rate_percent": 31.6,
+    "false_negative_rate_percent": 15.4,
+    "confusion_matrix": {
+      "true_positives": 11,
+      "true_negatives": 13,
+      "false_positives": 6,
+      "false_negatives": 2
+    }
+  },
+  "acoustic_heuristic": {
+    "name": "Acoustic Heuristic (Experimental \u2014 Not Used in Scoring)",
+    "scoring_status": "experimental_not_used_in_scoring",
+    "scoring_note": "Acoustic spectral heuristic is experimental and excluded from risk scoring (measured 28.1% accuracy, 52.6% FPR, 100% FNR).",
+    "accuracy_percent": 28.1,
+    "false_positive_rate_percent": 52.6,
+    "false_negative_rate_percent": 100.0,
+    "confusion_matrix": {
+      "true_positives": 0,
+      "true_negatives": 9,
+      "false_positives": 10,
+      "false_negatives": 13
+    }
+  },
+  "combination_dual_consensus": {
+    "name": "Combination (Dual Consensus: Both Must Flag)",
+    "accuracy_percent": 56.2,
+    "false_positive_rate_percent": 5.3,
+    "false_negative_rate_percent": 100.0,
+    "confusion_matrix": {
+      "true_positives": 0,
+      "true_negatives": 18,
+      "false_positives": 1,
+      "false_negatives": 13
+    }
+  },
+  "combination_average_prob": {
+    "name": "Combination (Average Probability >= 0.50)",
+    "accuracy_percent": 75.0,
+    "false_positive_rate_percent": 31.6,
+    "false_negative_rate_percent": 15.4,
+    "confusion_matrix": {
+      "true_positives": 11,
+      "true_negatives": 13,
+      "false_positives": 6,
+      "false_negatives": 2
+    }
+  },
+  "per_format_breakdown": {
+    "mp3": {
+      "format": "MP3",
+      "sample_size": 12,
+      "real_count": 5,
+      "synthetic_count": 7,
+      "note": "12 clips total (5 authentic human recordings, 7 synthetic neural voices).",
+      "pretrained_model": {
+        "accuracy_percent": 66.7,
+        "false_positive_rate_percent": 40.0,
+        "false_negative_rate_percent": 28.6,
+        "confusion_matrix": {
+          "true_positives": 5,
+          "true_negatives": 3,
+          "false_positives": 2,
+          "false_negatives": 2
+        }
+      },
+      "acoustic_heuristic": {
+        "accuracy_percent": 41.7,
+        "false_positive_rate_percent": 0.0,
+        "false_negative_rate_percent": 100.0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "true_negatives": 5,
+          "false_positives": 0,
+          "false_negatives": 7
+        }
+      },
+      "combination_dual": {
+        "accuracy_percent": 41.7,
+        "false_positive_rate_percent": 0.0,
+        "false_negative_rate_percent": 100.0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "true_negatives": 5,
+          "false_positives": 0,
+          "false_negatives": 7
+        }
+      }
+    },
+    "mpeg": {
+      "format": "MPEG",
+      "sample_size": 14,
+      "real_count": 14,
+      "synthetic_count": 0,
+      "note": "14 clips total (14 authentic human voice recordings from WhatsApp and microphone).",
+      "pretrained_model": {
+        "accuracy_percent": 71.4,
+        "false_positive_rate_percent": 28.6,
+        "false_negative_rate_percent": null,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "true_negatives": 10,
+          "false_positives": 4,
+          "false_negatives": 0
+        }
+      },
+      "acoustic_heuristic": {
+        "accuracy_percent": 28.6,
+        "false_positive_rate_percent": 71.4,
+        "false_negative_rate_percent": null,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "true_negatives": 4,
+          "false_positives": 10,
+          "false_negatives": 0
+        }
+      },
+      "combination_dual": {
+        "accuracy_percent": 92.9,
+        "false_positive_rate_percent": 7.1,
+        "false_negative_rate_percent": null,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "true_negatives": 13,
+          "false_positives": 1,
+          "false_negatives": 0
+        }
+      }
+    },
+    "ogg": {
+      "format": "OGG",
+      "sample_size": 6,
+      "real_count": 0,
+      "synthetic_count": 6,
+      "note": "6 clips total (6 synthetic voice clones from WhatsApp PTT generation).",
+      "pretrained_model": {
+        "accuracy_percent": 100.0,
+        "false_positive_rate_percent": null,
+        "false_negative_rate_percent": 0.0,
+        "confusion_matrix": {
+          "true_positives": 6,
+          "true_negatives": 0,
+          "false_positives": 0,
+          "false_negatives": 0
+        }
+      },
+      "acoustic_heuristic": {
+        "accuracy_percent": 0.0,
+        "false_positive_rate_percent": null,
+        "false_negative_rate_percent": 100.0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "true_negatives": 0,
+          "false_positives": 0,
+          "false_negatives": 6
+        }
+      },
+      "combination_dual": {
+        "accuracy_percent": 0.0,
+        "false_positive_rate_percent": null,
+        "false_negative_rate_percent": 100.0,
+        "confusion_matrix": {
+          "true_positives": 0,
+          "true_negatives": 0,
+          "false_positives": 0,
+          "false_negatives": 6
+        }
+      }
+    }
+  },
+  "clips": [
+    {
+      "filename": "real/real_01.wav",
+      "original_filename": "Record (online-voice-recorder.com) (1).mp3",
+      "format": "mp3",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 1226.6,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00032,
+          "zcr_micro_jitter_std": 0.1031,
+          "energy_variance": 5.5e-05,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 8.86,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.9999,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "real/real_02.wav",
+      "original_filename": "Record (online-voice-recorder.com) (2).mp3",
+      "format": "mp3",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 1249.0,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00459,
+          "zcr_micro_jitter_std": 0.1761,
+          "energy_variance": 4.8e-05,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 9.07,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.9999,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "real/real_03.wav",
+      "original_filename": "Record (online-voice-recorder.com) (3).mp3",
+      "format": "mp3",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 1096.8,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00076,
+          "zcr_micro_jitter_std": 0.1162,
+          "energy_variance": 6.4e-05,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 7.92,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_04.wav",
+      "original_filename": "Record (online-voice-recorder.com) (4).mp3",
+      "format": "mp3",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0587,
+        "latency_ms": 1201.1,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00166,
+          "zcr_micro_jitter_std": 0.1614,
+          "energy_variance": 5e-05,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 8.64,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0587,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_05.wav",
+      "original_filename": "Record (online-voice-recorder.com).mp3",
+      "format": "mp3",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0292,
+        "latency_ms": 1371.9,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00231,
+          "zcr_micro_jitter_std": 0.1613,
+          "energy_variance": 3.7e-05,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 9.46,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0292,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_06.wav",
+      "original_filename": "WhatsApp Audio 2026-10-20 at 00.47.33.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 759.6,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0001,
+          "zcr_micro_jitter_std": 0.085,
+          "energy_variance": 0.001016,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 5.3,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_07.wav",
+      "original_filename": "WhatsApp Audio 2026-10-20 at 00.47.34.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.982,
+        "latency_ms": 692.2,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 5e-05,
+          "zcr_micro_jitter_std": 0.0376,
+          "energy_variance": 0.000562,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 5.26,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Synthetic",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.982,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "real/real_08.wav",
+      "original_filename": "WhatsApp Audio 2026-10-20 at 00.47.35.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 602.4,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00011,
+          "zcr_micro_jitter_std": 0.0961,
+          "energy_variance": 0.003014,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.44,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "real/real_09.wav",
+      "original_filename": "rec.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 914.3,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.55,
+        "diagnostics": {
+          "hf_energy_ratio": 4e-05,
+          "zcr_micro_jitter_std": 0.0947,
+          "energy_variance": 0.001532,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 6.22,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_10.wav",
+      "original_filename": "rec1.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 653.6,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 8e-05,
+          "zcr_micro_jitter_std": 0.0681,
+          "energy_variance": 0.001215,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.94,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_11.wav",
+      "original_filename": "rec10.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 656.5,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 5e-05,
+          "zcr_micro_jitter_std": 0.0725,
+          "energy_variance": 0.001224,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 5.14,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_12.wav",
+      "original_filename": "rec20.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 545.9,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.55,
+        "diagnostics": {
+          "hf_energy_ratio": 1e-05,
+          "zcr_micro_jitter_std": 0.0858,
+          "energy_variance": 0.002088,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.13,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_13.wav",
+      "original_filename": "rec3.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 713.7,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00178,
+          "zcr_micro_jitter_std": 0.0855,
+          "energy_variance": 0.001674,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 5.74,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_14.wav",
+      "original_filename": "rec30.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9997,
+        "latency_ms": 557.5,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00036,
+          "zcr_micro_jitter_std": 0.0941,
+          "energy_variance": 0.004079,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.15,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.9997,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "real/real_15.wav",
+      "original_filename": "rec5.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 753.4,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0001,
+          "zcr_micro_jitter_std": 0.085,
+          "energy_variance": 0.001016,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 5.3,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_16.wav",
+      "original_filename": "rec6.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 730.8,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0001,
+          "zcr_micro_jitter_std": 0.085,
+          "energy_variance": 0.001016,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 5.3,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_17.wav",
+      "original_filename": "rec7.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 545.9,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.55,
+        "diagnostics": {
+          "hf_energy_ratio": 1e-05,
+          "zcr_micro_jitter_std": 0.0858,
+          "energy_variance": 0.002088,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.13,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_18.wav",
+      "original_filename": "rec8.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 697.3,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9,
+        "diagnostics": {
+          "hf_energy_ratio": 5e-05,
+          "zcr_micro_jitter_std": 0.0725,
+          "energy_variance": 0.001224,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 5.14,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "real/real_19.wav",
+      "original_filename": "rec9.mpeg",
+      "format": "mpeg",
+      "ground_truth": "Authentic Human",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9997,
+        "latency_ms": 551.1,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00036,
+          "zcr_micro_jitter_std": 0.0941,
+          "energy_variance": 0.004079,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.15,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": true,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": true,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.9997,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_01.wav",
+      "original_filename": "ElevenLabs_2026-10-19T19_31_21_Roger - Laid-Back, Casual, Resonant_pre_sp100_s50_sb75_v4.mp3",
+      "format": "mp3",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 517.4,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00084,
+          "zcr_micro_jitter_std": 0.182,
+          "energy_variance": 0.001685,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.71,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_02.wav",
+      "original_filename": "ElevenLabs_2026-10-19T19_32_56_Sarah - Professional British Woman_pvc_sp100_s50_sb75_v4.mp3",
+      "format": "mp3",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 596.5,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00034,
+          "zcr_micro_jitter_std": 0.2047,
+          "energy_variance": 0.005538,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.21,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_03.wav",
+      "original_filename": "ElevenLabs_2026-10-19T19_35_16_Vikas - Natural Indian Male_pvc_sp100_s50_sb75_v4.mp3",
+      "format": "mp3",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.0,
+        "latency_ms": 515.7,
+        "correct": false
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 5e-05,
+          "zcr_micro_jitter_std": 0.1286,
+          "energy_variance": 0.014152,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.21,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Authentic Human",
+        "average_probability": 0.0,
+        "verdict": "Nominal human speech"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_04.wav",
+      "original_filename": "ElevenLabs_2026-10-19T19_35_59_Lucy - Fresh & Casual_pvc_sp100_s50_sb75_v4.mp3",
+      "format": "mp3",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 0.9999,
+        "latency_ms": 530.6,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00165,
+          "zcr_micro_jitter_std": 0.2359,
+          "energy_variance": 0.005207,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.28,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 0.9999,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_05.wav",
+      "original_filename": "WhatsApp Ptt 2026-10-20 at 01.12.42.ogg",
+      "format": "ogg",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 913.2,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.08964,
+          "zcr_micro_jitter_std": 0.2071,
+          "energy_variance": 0.001168,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 7.01,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_06.wav",
+      "original_filename": "WhatsApp Ptt 2026-10-20 at 01.13.36.ogg",
+      "format": "ogg",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 802.6,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.01916,
+          "zcr_micro_jitter_std": 0.1588,
+          "energy_variance": 0.001831,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 5.91,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_07.wav",
+      "original_filename": "WhatsApp Ptt 2026-10-20 at 01.14.25.ogg",
+      "format": "ogg",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 943.4,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.03075,
+          "zcr_micro_jitter_std": 0.1744,
+          "energy_variance": 0.002406,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 7.13,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_08.wav",
+      "original_filename": "WhatsApp Ptt 2026-10-20 at 01.23.11.ogg",
+      "format": "ogg",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 952.2,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00356,
+          "zcr_micro_jitter_std": 0.1194,
+          "energy_variance": 0.00077,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 7.33,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_09.wav",
+      "original_filename": "WhatsApp Ptt 2026-10-20 at 01.24.50.ogg",
+      "format": "ogg",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 2922.9,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00631,
+          "zcr_micro_jitter_std": 0.1336,
+          "energy_variance": 0.001037,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 20.01,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_10.wav",
+      "original_filename": "rec1.ogg",
+      "format": "ogg",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 1053.6,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.01891,
+          "zcr_micro_jitter_std": 0.1533,
+          "energy_variance": 0.000757,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 7.09,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_11.wav",
+      "original_filename": "ttsMP3.com_VoiceText_2026-10-20_1-10-23.mp3",
+      "format": "mp3",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 553.7,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.3,
+        "diagnostics": {
+          "hf_energy_ratio": 0.01079,
+          "zcr_micro_jitter_std": 0.2104,
+          "energy_variance": 0.000499,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 3.74,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_12.wav",
+      "original_filename": "ttsMP3.com_VoiceText_2026-10-20_1-9-21.mp3",
+      "format": "mp3",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 568.2,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.00106,
+          "zcr_micro_jitter_std": 0.1625,
+          "energy_variance": 0.001716,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.25,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    },
+    {
+      "filename": "synthetic/synthetic_13.wav",
+      "original_filename": "ttsMP3.com_VoiceText_2026-10-20_1-9-57.mp3",
+      "format": "mp3",
+      "ground_truth": "Synthetic",
+      "pretrained_model": {
+        "predicted": "Synthetic",
+        "synthetic_probability": 1.0,
+        "latency_ms": 547.0,
+        "correct": true
+      },
+      "acoustic_heuristic": {
+        "predicted": "Authentic Human",
+        "synthetic_probability": 0.05,
+        "diagnostics": {
+          "hf_energy_ratio": 0.0004,
+          "zcr_micro_jitter_std": 0.1563,
+          "energy_variance": 0.001796,
+          "sample_rate_hz": 16000,
+          "duration_seconds": 4.34,
+          "scoring_status": "experimental_not_used_in_scoring"
+        },
+        "correct": false,
+        "scoring_status": "experimental_not_used_in_scoring"
+      },
+      "combination": {
+        "dual_consensus_predicted": "Authentic Human",
+        "dual_consensus_correct": false,
+        "average_predicted": "Synthetic",
+        "average_probability": 1.0,
+        "verdict": "Possible synthetic speech (soft signal \u2014 31.6% FPR)"
+      }
+    }
+  ]
+}

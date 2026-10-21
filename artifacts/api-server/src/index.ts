@@ -1,14 +1,9 @@
+import "./env"; // must stay the first import: loads .env before any other module reads process.env
+
 import app from "./app";
 import { logger } from "./lib/logger";
 
-const rawPort = process.env["PORT"];
-
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
-
+const rawPort = process.env["PORT"] || "3001";
 const port = Number(rawPort);
 
 if (Number.isNaN(port) || port <= 0) {

@@ -1,15 +1,21 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: VEIL Deepfake Defense API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+    description: System Health & Diagnostics
+  - name: detection
+    description: Deepfake, Voice-Cloning, and Scam Detection
+  - name: incidents
+    description: Incident Register & Forensic Logs
+  - name: contacts
+    description: Trusted Directory & Out-of-Band Callbacks
+
 paths:
   /healthz:
     get:
@@ -24,6 +30,253 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /detect/analyze:
+    post:
+      operationId: analyzeMediaOrTranscript
+      tags: [detection]
+      summary: Analyze stream telemetry or transcript
+      description: Evaluates transcript heuristics, vocoder anomalies, and facial synchronicity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeRequest"
+      responses:
+        "200":
+          description: Analysis verdict computed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzeResponse"
+        "400":
+          description: Validation error or invalid file format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /incidents:
+    get:
+      operationId: listIncidents
+      tags: [incidents]
+      summary: List security incidents
+      description: Returns forensic incident audit logs
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: severity
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: verdict
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of incident records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IncidentItem"
+    post:
+      operationId: createIncident
+      tags: [incidents]
+      summary: Create new incident record
+      description: Logs an intercepted threat or suspicious interaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateIncidentRequest"
+      responses:
+        "201":
+          description: Incident created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncidentItem"
+        "400":
+          description: Invalid incident data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /incidents/{id}:
+    get:
+      operationId: getIncidentById
+      tags: [incidents]
+      summary: Get incident details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Incident found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncidentItem"
+        "404":
+          description: Incident not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateIncidentResolution
+      tags: [incidents]
+      summary: Update incident resolution note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateIncidentRequest"
+      responses:
+        "200":
+          description: Incident updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncidentItem"
+        "404":
+          description: Incident not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteIncident
+      tags: [incidents]
+      summary: Delete incident record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Incident deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+  /contacts:
+    get:
+      operationId: listContacts
+      tags: [contacts]
+      summary: List trusted contacts
+      description: Returns pre-authorized callback directory
+      responses:
+        "200":
+          description: List of trusted contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContactItem"
+    post:
+      operationId: createContact
+      tags: [contacts]
+      summary: Add trusted contact
+      description: Stores an independently verified contact for out-of-band callback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContactRequest"
+      responses:
+        "201":
+          description: Contact added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactItem"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /contacts/{id}:
+    put:
+      operationId: updateContact
+      tags: [contacts]
+      summary: Update trusted contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContactRequest"
+      responses:
+        "200":
+          description: Contact updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactItem"
+        "404":
+          description: Contact not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteContact
+      tags: [contacts]
+      summary: Delete trusted contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Contact removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +287,269 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        statusCode:
+          type: integer
+        details:
+          type: array
+          items:
+            type: object
+      required:
+        - error
+        - message
+        - statusCode
+
+    DeleteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        id:
+          type: string
+      required:
+        - success
+
+    AnalyzeRequest:
+      type: object
+      properties:
+        transcript:
+          type: string
+        callerClaim:
+          type: string
+        expectedIdentity:
+          type: string
+        audioMetrics:
+          type: object
+          properties:
+            rms:
+              type: number
+            peakFreqHz:
+              type: number
+            highFreqRatio:
+              type: number
+            hasVocoderJitter:
+              type: boolean
+        videoMetrics:
+          type: object
+          properties:
+            lipSyncDriftMs:
+              type: number
+            blinkRatePerMin:
+              type: number
+            faceMeshJitter:
+              type: boolean
+        file:
+          type: object
+          properties:
+            fileName:
+              type: string
+            fileSize:
+              type: integer
+            mimeType:
+              type: string
+            contentBase64:
+              type: string
+
+    AnalyzeResponse:
+      type: object
+      properties:
+        score:
+          type: integer
+          nullable: true
+          description: "Composite score 0-100, or null when no real input produced a result."
+        verdict:
+          type: string
+        riskLevel:
+          type: string
+          enum: [low, medium, high, insufficient]
+        signalsTriggered:
+          type: array
+          items:
+            type: string
+        telemetry:
+          type: object
+          properties:
+            isHeuristic:
+              type: boolean
+            scoringMethodology:
+              type: string
+            analysisTimestamp:
+              type: string
+            flagsCount:
+              type: integer
+            breakdown:
+              type: object
+              properties:
+                videoScore:
+                  type: integer
+                audioScore:
+                  type: integer
+                conversationalScore:
+                  type: integer
+          required:
+            - isHeuristic
+            - scoringMethodology
+            - analysisTimestamp
+      required:
+        - score
+        - verdict
+        - riskLevel
+        - signalsTriggered
+        - telemetry
+
+    IncidentItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        severity:
+          type: string
+          enum: [High, Medium, Low]
+        category:
+          type: string
+        verdict:
+          type: string
+          enum: [Suspicious, Needs review, Inconclusive, Low concern]
+        time:
+          type: string
+        score:
+          type: integer
+        resolution:
+          type: string
+        detail:
+          type: string
+        signals:
+          type: array
+          items:
+            type: string
+        transcriptExcerpt:
+          type: string
+        callerClaim:
+          type: string
+      required:
+        - id
+        - title
+        - severity
+        - category
+        - verdict
+        - time
+        - score
+        - resolution
+        - detail
+
+    CreateIncidentRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        severity:
+          type: string
+          enum: [High, Medium, Low]
+        category:
+          type: string
+        verdict:
+          type: string
+          enum: [Suspicious, Needs review, Inconclusive, Low concern]
+        score:
+          type: integer
+        resolution:
+          type: string
+        detail:
+          type: string
+        signals:
+          type: array
+          items:
+            type: string
+        transcriptExcerpt:
+          type: string
+        callerClaim:
+          type: string
+      required:
+        - title
+        - severity
+        - category
+        - verdict
+        - score
+        - detail
+
+    UpdateIncidentRequest:
+      type: object
+      properties:
+        resolution:
+          type: string
+        severity:
+          type: string
+          enum: [High, Medium, Low]
+        verdict:
+          type: string
+          enum: [Suspicious, Needs review, Inconclusive, Low concern]
+
+    ContactItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        relationship:
+          type: string
+        organization:
+          type: string
+        role:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        consent:
+          type: boolean
+        status:
+          type: string
+        verified:
+          type: string
+      required:
+        - id
+        - name
+        - relationship
+        - organization
+        - role
+        - phone
+        - email
+        - consent
+        - status
+        - verified
+
+    CreateContactRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        relationship:
+          type: string
+        organization:
+          type: string
+        role:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        consent:
+          type: boolean
+        status:
+          type: string
+        verified:
+          type: string
+      required:
+        - name
+        - relationship
+        - role
+        - phone

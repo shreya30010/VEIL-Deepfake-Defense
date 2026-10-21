@@ -1,0 +1,44 @@
+================================================================================
+VEIL EVALUATION DATASET — AUDIO SOURCES & PROVENANCE
+================================================================================
+Ground-truth labels defined strictly by user directory sorting.
+All clips converted to standard 16 kHz, mono, 16-bit PCM WAV.
+Audio content is unedited and untrimmed.
+
+REAL HUMAN RECORDINGS (Count: 19)
+--------------------------------------------------------------------------------
+real_01.wav -> Record (online-voice-recorder.com) (1).mp3
+real_02.wav -> Record (online-voice-recorder.com) (2).mp3
+real_03.wav -> Record (online-voice-recorder.com) (3).mp3
+real_04.wav -> Record (online-voice-recorder.com) (4).mp3
+real_05.wav -> Record (online-voice-recorder.com).mp3
+real_06.wav -> WhatsApp Audio 2026-10-20 at 00.47.33.mpeg
+real_07.wav -> WhatsApp Audio 2026-10-20 at 00.47.34.mpeg
+real_08.wav -> WhatsApp Audio 2026-10-20 at 00.47.35.mpeg
+real_09.wav -> rec.mpeg
+real_10.wav -> rec1.mpeg
+real_11.wav -> rec10.mpeg
+real_12.wav -> rec20.mpeg
+real_13.wav -> rec3.mpeg
+real_14.wav -> rec30.mpeg
+real_15.wav -> rec5.mpeg
+real_16.wav -> rec6.mpeg
+real_17.wav -> rec7.mpeg
+real_18.wav -> rec8.mpeg
+real_19.wav -> rec9.mpeg
+
+AI-GENERATED SYNTHETIC CLIPS (Count: 13)
+--------------------------------------------------------------------------------
+synthetic_01.wav -> ElevenLabs_2026-10-19T19_31_21_Roger - Laid-Back, Casual, Resonant_pre_sp100_s50_sb75_v4.mp3
+synthetic_02.wav -> ElevenLabs_2026-10-19T19_32_56_Sarah - Professional British Woman_pvc_sp100_s50_sb75_v4.mp3
+synthetic_03.wav -> ElevenLabs_2026-10-19T19_35_16_Vikas - Natural Indian Male_pvc_sp100_s50_sb75_v4.mp3
+synthetic_04.wav -> ElevenLabs_2026-10-19T19_35_59_Lucy - Fresh & Casual_pvc_sp100_s50_sb75_v4.mp3
+synthetic_05.wav -> WhatsApp Ptt 2026-10-20 at 01.12.42.ogg
+synthetic_06.wav -> WhatsApp Ptt 2026-10-20 at 01.13.36.ogg
+synthetic_07.wav -> WhatsApp Ptt 2026-10-20 at 01.14.25.ogg
+synthetic_08.wav -> WhatsApp Ptt 2026-10-20 at 01.23.11.ogg
+synthetic_09.wav -> WhatsApp Ptt 2026-10-20 at 01.24.50.ogg
+synthetic_10.wav -> rec1.ogg
+synthetic_11.wav -> ttsMP3.com_VoiceText_2026-10-20_1-10-23.mp3
+synthetic_12.wav -> ttsMP3.com_VoiceText_2026-10-20_1-9-21.mp3
+synthetic_13.wav -> ttsMP3.com_VoiceText_2026-10-20_1-9-57.mp3

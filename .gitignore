@@ -44,6 +44,52 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example
+*.env
+
+# SQLite local databases
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-journal
+**/data/*.sqlite
+**/data/*.sqlite*
+data/
+scratch/
+
 # Replit
 .cache/
 .local/
+
+# Evaluation audio test corpus
+evaluation/*.wav
+evaluation/**/*.wav
+evaluation/*/*.wav
+evaluation/*.mp3
+evaluation/**/*.mp3
+evaluation/*/*.mp3
+
+# ML Model Weights and Caches
+*.bin
+*.pt
+*.safetensors
+*.onnx
+models/
+**/model_weights/
+**/.cache/
+.cache/
+
+# Nested extracts
+VEIL-Deepfake-Defense/
+
+# Agent / assistant working folders
+.agents/
+.conversation/
+veil-src.zip
