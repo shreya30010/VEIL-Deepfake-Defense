@@ -93,3 +93,8 @@ VEIL-Deepfake-Defense/
 .agents/
 .conversation/
 veil-src.zip
+
+artifacts/vericall/.netlify/
+__pycache__/
+*.pyc
+.env.old
